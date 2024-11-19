@@ -1,0 +1,2001 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Guía de Inversiones en Argentina</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Enlace a Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Enlaces para jQuery UI -->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <!-- SheetJS para exportar a Excel -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Estilos CSS -->
+    <style>
+        /* Definición de variables para facilitar cambios futuros */
+        :root {
+            --bg-color: #005f6a; /* Azul petróleo */
+            --bg-color-light: #007b8c;
+            --bg-color-dark: #00424c;
+            --element-bg: #005f6a;
+            --element-bg-light: #007b8c;
+            --element-bg-dark: #00424c;
+            --shadow-light: rgba(255, 255, 255, 0.7);
+            --shadow-dark: rgba(0, 0, 0, 0.4);
+            --text-color: #ffffff;
+            --text-color-secondary: #d1d1d1;
+            --text-color-dark: #f0f0f0;
+            --button-bg: #005f6a;
+            --button-bg-hover: #00424c;
+            --button-text-color: #ffffff;
+            --border-radius: 15px;
+            --font-title: 'Roboto', sans-serif;
+            --font-body: 'Open Sans', sans-serif;
+            --font-generador: 'Poppins', sans-serif;
+        }
+
+        /* Estilos generales */
+        body {
+            font-family: var(--font-body);
+            margin: 0;
+            padding: 0;
+            color: var(--text-color-dark);
+            background-color: var(--bg-color);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Header y navegación */
+        header {
+            background-color: var(--element-bg);
+            padding: 10px 20px;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 4px 8px var(--shadow-dark);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Eliminado el logo para maximizar espacio */
+
+        nav {
+            /* Se mantiene flex para alinear correctamente */
+        }
+
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        nav ul li {
+            margin-left: 15px;
+        }
+
+        nav ul li a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: var(--border-radius);
+            transition: background-color 0.3s, box-shadow 0.3s;
+            display: block;
+            background: var(--element-bg);
+            box-shadow:
+                5px 5px 10px var(--shadow-dark),
+                -5px -5px 10px var(--shadow-light);
+            font-family: var(--font-body);
+        }
+
+        nav ul li a:hover {
+            background-color: var(--element-bg-dark);
+            box-shadow:
+                inset 5px 5px 10px var(--shadow-dark),
+                inset -5px -5px 10px var(--shadow-light);
+        }
+
+        /* Secciones */
+        section {
+            padding: 120px 20px 40px; /* Ajuste del padding superior para el header fijo */
+            max-width: 1000px;
+            margin: auto;
+            background: var(--bg-color);
+            color: var(--text-color-dark);
+        }
+
+        section h2 {
+            color: var(--text-color);
+            margin-top: 0;
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+            font-family: var(--font-title);
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+        }
+
+        section h3, section h4, section h5 {
+            color: var(--text-color-dark);
+            margin-top: 20px;
+            text-align: center; /* Centrar encabezados de subsecciones */
+            font-family: var(--font-title);
+        }
+
+        /* Botones desplegables (Acordeones) */
+        .accordion {
+            margin-bottom: 20px;
+        }
+
+        .accordion button {
+            width: 100%;
+            padding: 15px;
+            text-align: left;
+            font-size: 18px;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            background: var(--element-bg);
+            color: var(--text-color);
+            border-radius: var(--border-radius);
+            margin-bottom: 10px;
+            transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow:
+                5px 5px 10px var(--shadow-dark),
+                -5px -5px 10px var(--shadow-light);
+            font-family: var(--font-body);
+        }
+
+        .accordion button::after {
+            content: '\25BC';
+            font-size: 16px;
+            transition: transform 0.3s;
+        }
+
+        .accordion button.active::after {
+            transform: rotate(180deg);
+        }
+
+        .accordion button:hover {
+            background-color: var(--element-bg-light);
+            box-shadow:
+                inset 5px 5px 10px var(--shadow-dark),
+                inset -5px -5px 10px var(--shadow-light);
+        }
+
+        .panel-content {
+            padding: 15px;
+            display: none;
+            overflow: hidden;
+            background-color: var(--element-bg);
+            border-radius: var(--border-radius);
+            box-shadow:
+                inset 5px 5px 10px var(--shadow-dark),
+                inset -5px -5px 10px var(--shadow-light);
+            color: var(--text-color-dark);
+            font-family: var(--font-body);
+        }
+
+        /* Animaciones */
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        /* Botón Volver Arriba */
+        #back-to-top {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            background-color: var(--element-bg);
+            color: var(--text-color);
+            padding: 10px 15px;
+            border-radius: 50%;
+            text-decoration: none;
+            font-size: 18px;
+            display: none;
+            z-index: 1000;
+            transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+            box-shadow:
+                5px 5px 10px var(--shadow-dark),
+                -5px -5px 10px var(--shadow-light);
+            font-family: var(--font-body);
+        }
+
+        #back-to-top:hover {
+            background-color: var(--element-bg-dark);
+            box-shadow:
+                inset 5px 5px 10px var(--shadow-dark),
+                inset -5px -5px 10px var(--shadow-light);
+            transform: scale(1.1);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--element-bg);
+            color: var(--text-color-secondary);
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            font-size: 14px;
+            box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+            font-family: var(--font-body);
+        }
+
+        footer .aviso {
+            font-size: 12px;
+            margin-top: 10px;
+            color: #999;
+        }
+
+        /* Enlaces */
+        a {
+            color: var(--text-color);
+            text-decoration: none;
+            transition: color 0.3s;
+            font-family: var(--font-body);
+        }
+
+        a:hover {
+            color: var(--element-bg-light);
+            text-decoration: underline;
+        }
+
+        /* Responsividad */
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+                position: absolute;
+                background-color: var(--element-bg);
+                top: 60px;
+                right: 20px;
+                width: 200px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                flex-direction: column;
+                border-radius: var(--border-radius);
+            }
+
+            nav ul li {
+                display: block;
+                margin: 0;
+            }
+
+            nav ul li a {
+                display: block;
+                padding: 10px 15px;
+            }
+
+            .menu-toggle {
+                display: inline-block;
+                cursor: pointer;
+                font-size: 24px;
+                margin-left: 20px;
+                color: var(--text-color);
+                font-family: var(--font-body);
+            }
+        }
+
+        @media (min-width: 769px) {
+            .menu-toggle {
+                display: none;
+            }
+        }
+
+        /* Estilos para la Calculadora */
+        #calculadora, #generador-prompt {
+            padding: 120px 20px 40px; /* Ajuste del padding superior para el header fijo */
+            max-width: 800px;
+            margin: auto;
+            background-color: var(--element-bg);
+            border-radius: var(--border-radius);
+            box-shadow:
+                5px 5px 15px var(--shadow-dark),
+                -5px -5px 15px var(--shadow-light);
+            color: var(--text-color-dark);
+            font-family: var(--font-body);
+        }
+
+        .calculator {
+            background: var(--element-bg);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow:
+                5px 5px 15px var(--shadow-dark),
+                -5px -5px 15px var(--shadow-light);
+            width: 100%;
+            max-width: 500px;
+            margin: auto;
+            color: var(--text-color-dark);
+            font-family: var(--font-body);
+        }
+
+        .calculator h1 {
+            /* Eliminado el título duplicado */
+            display: none;
+        }
+
+        .calculator h2 {
+            text-align: center;
+            color: var(--text-color);
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            font-family: var(--font-title);
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--text-color-dark);
+            font-family: var(--font-body);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.8rem;
+            border: none;
+            border-radius: var(--border-radius);
+            background: var(--element-bg-light);
+            color: var(--text-color-dark);
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            box-shadow:
+                inset 5px 5px 10px var(--shadow-dark),
+                inset -5px -5px 10px var(--shadow-light);
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            background: var(--element-bg);
+            box-shadow:
+                inset 2px 2px 5px var(--shadow-dark),
+                inset -2px -2px 5px var(--shadow-light);
+        }
+
+        input::placeholder {
+            color: #dce8f3;
+        }
+
+        button {
+            width: 100%;
+            padding: 1rem;
+            background: var(--button-bg);
+            border: none;
+            border-radius: var(--border-radius);
+            color: var(--button-text-color);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s, box-shadow 0.3s;
+            margin-top: 10px;
+            box-shadow:
+                5px 5px 10px var(--shadow-dark),
+                -5px -5px 10px var(--shadow-light);
+            font-family: var(--font-body);
+        }
+
+        button:hover {
+            background: var(--button-bg-hover);
+            box-shadow:
+                inset 5px 5px 10px var(--shadow-dark),
+                inset -5px -5px 10px var(--shadow-light);
+        }
+
+        #result, .result {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: var(--element-bg-light);
+            border-radius: var(--border-radius);
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--text-color-dark);
+            box-shadow:
+                inset 5px 5px 10px var(--shadow-dark),
+                inset -5px -5px 10px var(--shadow-light);
+            font-family: var(--font-body);
+        }
+
+        .animation {
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .interest-details {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--element-bg-light);
+            border-radius: var(--border-radius);
+            box-shadow:
+                inset 3px 3px 6px var(--shadow-dark),
+                inset -3px -3px 6px var(--shadow-light);
+            font-family: var(--font-body);
+        }
+
+        .interest-period {
+            margin: 0.5rem 0;
+            padding: 0.5rem;
+            background: var(--element-bg);
+            border-radius: var(--border-radius);
+            box-shadow:
+                inset 2px 2px 4px var(--shadow-dark),
+                inset -2px -2px 4px var(--shadow-light);
+            color: var(--text-color);
+            font-family: var(--font-body);
+        }
+
+        /* Botón Descargar a Excel */
+        #download-excel {
+            background: #4CAF50;
+            color: white;
+            padding: 1rem;
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background 0.3s, box-shadow 0.3s;
+            margin-top: 10px;
+            width: 100%;
+            box-shadow:
+                5px 5px 10px var(--shadow-dark),
+                -5px -5px 10px var(--shadow-light);
+            font-family: var(--font-body);
+        }
+
+        #download-excel:hover {
+            background: #45a049;
+            box-shadow:
+                inset 5px 5px 10px var(--shadow-dark),
+                inset -5px -5px 10px var(--shadow-light);
+        }
+
+        /* Estilo para la leyenda debajo del widget */
+        .merval-legend {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 14px;
+            color: var(--text-color-dark);
+            font-family: var(--font-body);
+        }
+
+        .merval-legend a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .merval-legend a:hover {
+            color: var(--element-bg-light);
+            text-decoration: underline;
+        }
+
+        /* Estilos para la sección Perfil del Inversor */
+        .profiles-container {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        .profile-card {
+            background: var(--element-bg);
+            border-radius: var(--border-radius);
+            padding: 25px;
+            width: 300px;
+            box-shadow:
+                5px 5px 15px var(--shadow-dark),
+                -5px -5px 15px var(--shadow-light);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            color: var(--text-color-dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: var(--font-body);
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow:
+                10px 10px 20px var(--shadow-dark),
+                -10px -10px 20px var(--shadow-light);
+        }
+
+        .profile-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--element-bg-light);
+            border-radius: 50%;
+            box-shadow:
+                5px 5px 10px var(--shadow-dark),
+                -5px -5px 10px var(--shadow-light);
+        }
+
+        .profile-title {
+            font-size: 24px;
+            color: var(--text-color-dark);
+            margin-bottom: 15px;
+            text-align: center;
+            font-family: var(--font-title);
+        }
+
+        .profile-description {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-color-dark);
+            text-align: justify;
+            display: none; /* Ocultar por defecto */
+            margin-top: 15px;
+            font-family: var(--font-body);
+        }
+
+        .risk-meter {
+            height: 10px;
+            background: #eee;
+            border-radius: 5px;
+            margin: 15px 0;
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .risk-level {
+            height: 100%;
+            transition: width 0.3s ease;
+            width: 0%; /* Inicialmente oculto */
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .profile-card:hover .profile-icon {
+            animation: pulse 1s infinite;
+        }
+
+        /* Estilos adicionales para mostrar la descripción activa */
+        .profile-card.active .profile-description {
+            display: block;
+        }
+
+        .profile-card.active .risk-level {
+            width: 100%;
+        }
+
+        /* Clase para el perfil destacado */
+        .highlighted-profile {
+            color: #FFD700; /* Amarillo brillante */
+            animation: blink 1.5s infinite;
+            font-weight: bold;
+        }
+
+        /* Animación de parpadeo */
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.2; }
+            100% { opacity: 1; }
+        }
+
+        /* Botón "Contraer Todo" */
+        #collapse-all {
+            position: fixed;
+            top: 50%;
+            left: 0;
+            transform: translateY(-50%);
+            background-color: var(--element-bg);
+            color: var(--text-color);
+            padding: 10px 15px;
+            border-top-right-radius: var(--border-radius);
+            border-bottom-right-radius: var(--border-radius);
+            cursor: pointer;
+            z-index: 1001;
+            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+            font-size: 14px;
+            box-shadow:
+                5px 5px 10px var(--shadow-dark),
+                -5px -5px 10px var(--shadow-light);
+            font-family: var(--font-body);
+        }
+
+        #collapse-all:hover {
+            background-color: var(--element-bg-dark);
+            transform: translateY(-50%) scale(1.05);
+            box-shadow:
+                inset 5px 5px 10px var(--shadow-dark),
+                inset -5px -5px 10px var(--shadow-light);
+        }
+
+        /* Transición suave para mostrar/ocultar la sección */
+        #perfil-del-inversor {
+            transition: opacity 0.5s ease, max-height 0.5s ease, margin 0.5s ease, padding 0.5s ease;
+            overflow: hidden;
+        }
+
+        #perfil-del-inversor.hidden {
+            opacity: 0;
+            max-height: 0;
+            padding: 0 20px;
+            margin: 0 auto;
+        }
+
+        #perfil-del-inversor.visible {
+            opacity: 1;
+            max-height: 2000px; /* Valor suficientemente grande para contener el contenido */
+        }
+
+        /* Estilos para la Sección Test de Perfil */
+        #test-perfil {
+            padding: 40px 20px;
+            background-color: var(--element-bg);
+            border-radius: var(--border-radius);
+            box-shadow:
+                5px 5px 15px var(--shadow-dark),
+                -5px -5px 15px var(--shadow-light);
+            max-width: 800px;
+            margin: 40px auto;
+            color: var(--text-color-dark);
+            font-family: var(--font-body);
+        }
+
+        #test-perfil h2 {
+            color: var(--text-color);
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            font-family: var(--font-title);
+        }
+
+        #test-perfil form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        #test-perfil .question {
+            display: flex;
+            flex-direction: column;
+        }
+
+        #test-perfil .question p {
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--text-color-dark);
+            font-family: var(--font-body);
+        }
+
+        #test-perfil .slider-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        #test-perfil .slider-container label {
+            flex: 1;
+            text-align: left;
+            color: var(--text-color-dark);
+            font-family: var(--font-body);
+        }
+
+        #test-perfil .slider-container input[type="range"] {
+            flex: 4;
+            -webkit-appearance: none;
+            width: 100%;
+            height: 8px;
+            border-radius: 5px;
+            background: #d3d3d3;
+            outline: none;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        #test-perfil .slider-container input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--element-bg-light);
+            cursor: pointer;
+            box-shadow:
+                2px 2px 5px var(--shadow-dark),
+                -2px -2px 5px var(--shadow-light);
+            transition: background 0.3s, box-shadow 0.3s;
+        }
+
+        #test-perfil .slider-container input[type="range"]::-webkit-slider-thumb:hover {
+            background: var(--element-bg-dark);
+            box-shadow:
+                inset 2px 2px 5px var(--shadow-dark),
+                inset -2px -2px 5px var(--shadow-light);
+        }
+
+        #test-perfil .range-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: var(--text-color-dark);
+            font-family: var(--font-body);
+            margin-top: 5px;
+        }
+
+        #test-perfil button {
+            padding: 10px;
+            background-color: var(--button-bg);
+            color: var(--button-text-color);
+            border: none;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            box-shadow:
+                5px 5px 10px var(--shadow-dark),
+                -5px -5px 10px var(--shadow-light);
+            font-family: var(--font-body);
+        }
+
+        #test-perfil button:hover {
+            background-color: var(--button-bg-hover);
+            box-shadow:
+                inset 5px 5px 10px var(--shadow-dark),
+                inset -5px -5px 10px var(--shadow-light);
+        }
+
+        #test-perfil #test-result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: var(--element-bg-light);
+            border-radius: var(--border-radius);
+            text-align: center;
+            font-size: 1.2rem;
+            display: none;
+            box-shadow:
+                inset 5px 5px 10px var(--shadow-dark),
+                inset -5px -5px 10px var(--shadow-light);
+            color: var(--text-color-dark);
+            font-family: var(--font-body);
+        }
+
+        /* Estilos para la Sección Herramientas */
+        #herramientas {
+            padding: 40px 20px;
+            background-color: var(--element-bg);
+            border-radius: var(--border-radius);
+            box-shadow:
+                5px 5px 15px var(--shadow-dark),
+                -5px -5px 15px var(--shadow-light);
+            max-width: 800px;
+            margin: 40px auto;
+            color: var(--text-color-dark);
+            font-family: var(--font-body);
+        }
+
+        #herramientas h2 {
+            color: var(--text-color);
+            text-align: center;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+            font-family: var(--font-title);
+        }
+
+        /* Botón Calculadora de Inversiones dentro de Herramientas */
+        .herramientas-accordion {
+            margin-bottom: 20px;
+        }
+
+        .herramientas-accordion button {
+            width: 100%;
+            padding: 15px;
+            text-align: left;
+            font-size: 18px;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            background: var(--element-bg);
+            color: var(--text-color);
+            border-radius: var(--border-radius);
+            margin-bottom: 10px;
+            transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow:
+                5px 5px 10px var(--shadow-dark),
+                -5px -5px 10px var(--shadow-light);
+            font-family: var(--font-body);
+        }
+
+        .herramientas-accordion button::after {
+            content: '\25BC';
+            font-size: 16px;
+            transition: transform 0.3s;
+        }
+
+        .herramientas-accordion button.active::after {
+            transform: rotate(180deg);
+        }
+
+        .herramientas-accordion button:hover {
+            background-color: var(--element-bg-light);
+            box-shadow:
+                inset 5px 5px 10px var(--shadow-dark),
+                inset -5px -5px 10px var(--shadow-light);
+        }
+
+        .herramientas-panel-content {
+            padding: 15px;
+            display: none;
+            overflow: hidden;
+            background-color: var(--element-bg);
+            border-radius: var(--border-radius);
+            box-shadow:
+                inset 5px 5px 10px var(--shadow-dark),
+                inset -5px -5px 10px var(--shadow-light);
+            color: var(--text-color-dark);
+            font-family: var(--font-body);
+        }
+
+        /* Estilos para el Generador de Prompts Financieros */
+        #generador-prompt .container {
+            background: var(--element-bg);
+            padding: 2.5rem;
+            border-radius: var(--border-radius);
+            box-shadow: 
+                20px 20px 60px #203d5b,
+                -20px -20px 60px #4c81b9;
+            width: 100%;
+            max-width: 800px;
+            transition: all 0.3s ease;
+            color: var(--text-color-dark);
+        }
+
+        #generador-prompt .container:hover {
+            transform: translateY(-5px);
+            box-shadow:
+                25px 25px 65px #203d5b,
+                -25px -25px 65px #4c81b9;
+        }
+
+        #generador-prompt h1 {
+            text-align: center;
+            color: var(--text-color);
+            margin-bottom: 2.5rem;
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            font-family: var(--font-title);
+        }
+
+        #generador-prompt .form-group {
+            margin-bottom: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        #generador-prompt .form-group:hover {
+            transform: translateX(5px);
+        }
+
+        #generador-prompt label {
+            display: block;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            color: var(--text-color);
+            font-family: var(--font-body);
+        }
+
+        #generador-prompt input {
+            width: 100%;
+            padding: 1rem;
+            border: none;
+            border-radius: var(--border-radius);
+            background: var(--element-bg-light);
+            box-shadow:
+                inset 5px 5px 10px var(--shadow-dark),
+                inset -5px -5px 10px var(--shadow-light);
+            font-size: 1.1rem;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            font-family: var(--font-body);
+        }
+
+        #generador-prompt input:focus {
+            outline: none;
+            box-shadow:
+                inset 7px 7px 12px var(--shadow-dark),
+                inset -7px -7px 12px var(--shadow-light);
+            transform: scale(1.02);
+        }
+
+        #generador-prompt input::placeholder {
+            color: #dce8f3;
+        }
+
+        #generador-prompt .button-container {
+            display: flex;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        #generador-prompt .button-container .button {
+            width: 50%;
+            background: var(--button-bg);
+            color: var(--button-text-color);
+            border: none;
+            border-radius: var(--border-radius);
+            padding: 1.2rem 2rem;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow:
+                8px 8px 16px #203d5b,
+                -8px -8px 16px #4c81b9;
+            font-family: var(--font-body);
+        }
+
+        #generador-prompt .button-container .button:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                10px 10px 20px #203d5b,
+                -10px -10px 20px #4c81b9;
+            background: var(--button-bg-hover);
+        }
+
+        #generador-prompt .result {
+            margin-top: 2.5rem;
+            padding: 1.5rem;
+            background: var(--element-bg-light);
+            border-radius: var(--border-radius);
+            color: var(--text-color-dark);
+            font-size: 1.1rem;
+            min-height: 120px;
+            white-space: pre-wrap;
+            box-shadow:
+                inset 5px 5px 10px var(--shadow-dark),
+                inset -5px -5px 10px var(--shadow-light);
+            transition: all 0.3s ease;
+            line-height: 1.6;
+            font-family: var(--font-body);
+        }
+
+        #generador-prompt .result:hover {
+            box-shadow:
+                inset 7px 7px 14px var(--shadow-dark),
+                inset -7px -7px 14px var(--shadow-light);
+        }
+
+        #generador-prompt .chatgpt-button {
+            background: linear-gradient(145deg, #365f8a, #2B547E);
+            border: none;
+            color: #FFFFFF;
+            padding: 1.2rem 2rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            width: 100%;
+            font-size: 1.2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-top: 1.5rem;
+            box-shadow: 
+                8px 8px 16px #203d5b,
+                -8px -8px 16px #4c81b9;
+            font-family: var(--font-body);
+        }
+
+        #generador-prompt .chatgpt-button:hover {
+            transform: translateY(-2px);
+            box-shadow:
+                10px 10px 20px #203d5b,
+                -10px -10px 20px #4c81b9;
+            background: linear-gradient(145deg, #2B547E, #365f8a);
+        }
+
+        @media (max-width: 768px) {
+            #generador-prompt .container {
+                padding: 1.5rem;
+            }
+
+            #generador-prompt h1 {
+                font-size: 1.8rem;
+            }
+
+            #generador-prompt .button-container {
+                flex-direction: column;
+            }
+
+            #generador-prompt .button-container .button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Botón "Contraer Todo" -->
+    <div id="collapse-all">Contraer Todo</div>
+
+    <!-- Header -->
+    <header>
+        <!-- Logo eliminado para maximizar espacio -->
+        <div class="menu-toggle">&#9776;</div>
+        <nav>
+            <ul>
+                <li><a href="#introduccion">Introducción</a></li>
+                <li><a href="#mercado-de-capitales">Mercado de Capitales</a></li>
+                <li><a href="#instrumentos-bancarios">Instrumentos Bancarios</a></li>
+                <li><a href="#instrumentos-alternativos">Instrumentos Alternativos</a></li>
+                <li><a href="#perfil-del-inversor">Perfil del Inversor</a></li>
+                <li><a href="#test-perfil">Test de Perfil</a></li>
+                <li><a href="#herramientas">Herramientas</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Sección de Introducción -->
+    <section id="introduccion">
+        <h2>Bienvenido a la Guía de Inversiones en Argentina</h2>
+        <p>Creado por Pablo Bascoy</p>
+        <!-- Valor actual del Índice Merval -->
+        <div id="merval-valor" style="text-align: center; margin-bottom: 20px;">
+            <!-- TradingView Widget BEGIN -->
+            <div class="tradingview-widget-container">
+                <div class="tradingview-widget-container__widget"></div>
+                <script type="text/javascript"
+                src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js">
+                {
+                    "symbol": "BCBA:IMV",
+                    "width": "100%",
+                    "colorTheme": "light",
+                    "isTransparent": false,
+                    "locale": "es"
+                }
+                </script>
+            </div>
+            <!-- TradingView Widget END -->
+            <!-- Leyenda con enlace -->
+            <p class="merval-legend"><a href="https://www.tradingview.com/chart/?symbol=BCBA%3AIMV" target="_blank">Vea el recorrido del Merval online</a></p>
+        </div>
+        <p>Invertir es una excelente manera de proteger y hacer crecer tu dinero.
+        Si eres nuevo en el mundo de las inversiones, esta guía te ayudará a entender
+        las opciones disponibles en Argentina de forma sencilla.</p>
+        <div class="conceptos-basicos">
+            <h3>Conceptos Básicos</h3>
+            <ul>
+                <li><strong>Rentabilidad:</strong> Ganancia que puedes obtener al invertir.</li>
+                <li><strong>Riesgo:</strong> Posibilidad de perder parte o todo el dinero invertido.</li>
+                <li><strong>Diversificación:</strong> Invertir en diferentes opciones para reducir riesgos.</li>
+                <li><strong>Liquidez:</strong> Facilidad para convertir tu inversión en efectivo.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Sección Mercado de Capitales -->
+    <section id="mercado-de-capitales">
+        <h2>Mercado de Capitales</h2>
+
+        <!-- Acciones -->
+        <div class="accordion">
+            <button>Acciones</button>
+            <div class="panel-content">
+                <p>Compra de participaciones de empresas cotizadas en la Bolsa de Comercio de Buenos Aires. Inversión con alto potencial de retorno pero también mayor riesgo.</p>
+
+                <!-- Panel Merval -->
+                <h4>Panel Merval (o Panel Líderes)</h4>
+                <ul>
+                    <li><strong>Definición:</strong> Este panel incluye las acciones más representativas del mercado argentino, seleccionadas según su capitalización bursátil y el volumen de operaciones.</li>
+                    <li><strong>Características:</strong>
+                        <ul>
+                            <li><strong>Alta liquidez:</strong> Son las acciones más negociadas, lo que significa que tienen un mayor volumen de compra y venta.</li>
+                            <li><strong>Composición:</strong> Forma parte del índice S&P Merval, que es el principal indicador bursátil del país. Este índice mide el rendimiento de las acciones más importantes del mercado.</li>
+                            <li><strong>Ejemplos de empresas:</strong> YPF, Grupo Financiero Galicia, Banco Macro, Pampa Energía, Aluar, entre otras.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ventajas:</strong>
+                        <ul>
+                            <li>Son consideradas más estables dentro del mercado argentino.</li>
+                            <li>Representan sectores clave de la economía nacional, como energía, finanzas y manufactura.</li>
+                        </ul>
+                    </li>
+                </ul>
+
+                <!-- Panel General -->
+                <h4>Panel General</h4>
+                <ul>
+                    <li><strong>Definición:</strong> Agrupa al resto de las empresas que no cumplen con los requisitos para estar en el Panel Merval. Incluye compañías más pequeñas o menos negociadas.</li>
+                    <li><strong>Características:</strong>
+                        <ul>
+                            <li><strong>Menor liquidez:</strong> Las operaciones con estas acciones pueden ser más limitadas y menos frecuentes.</li>
+                            <li><strong>Mayor riesgo y volatilidad:</strong> Estas empresas suelen tener una menor capitalización bursátil, lo que puede resultar en movimientos de precios más abruptos.</li>
+                            <li><strong>Diversidad:</strong> Abarca una amplia variedad de sectores y empresas que, aunque no son líderes, tienen potencial de crecimiento.</li>
+                            <li><strong>Ejemplos de empresas:</strong> Transportadora de Gas del Norte, Molinos Río de la Plata, Agrometal, entre otras.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Ventajas:</strong>
+                        <ul>
+                            <li>Posibilidad de encontrar oportunidades de inversión con mayor potencial de crecimiento (aunque con más riesgo).</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Bonos -->
+        <div class="accordion">
+            <button>Bonos</button>
+            <div class="panel-content">
+                <p>Títulos de deuda emitidos por el Gobierno (como Bonos del Tesoro) o empresas. Existen en pesos y dólares, y suelen ser opciones más conservadoras.</p>
+
+                <!-- Bonos Soberanos -->
+                <h4>Bonos Soberanos</h4>
+                <ul>
+                    <li><strong>Emitidos por el Gobierno Nacional de Argentina:</strong> Son títulos de deuda con respaldo estatal. Se diferencian según su estructura y características:</li>
+                    <li><strong>a. Por tipo de moneda:</strong>
+                        <ul>
+                            <li><strong>En pesos:</strong>
+                                <ul>
+                                    <li><strong>Bonos CER:</strong> Ajustados por el índice CER (Coeficiente de Estabilización de Referencia), que sigue la inflación. Ejemplo: Boncer (TX24, TX26).</li>
+                                    <li><strong>Bonos a Tasa Fija:</strong> Pagan intereses fijos preestablecidos. Ejemplo: BOTE 2026.</li>
+                                    <li><strong>Bonos Badlar:</strong> Ajustados por la tasa Badlar (tasa promedio de depósitos a plazo fijo de grandes montos). Ejemplo: BPLD 2026.</li>
+                                    <li><strong>Bonos a tasa variable:</strong> Su rendimiento depende de una tasa de referencia, como Badlar o la tasa del Banco Central.</li>
+                                </ul>
+                            </li>
+                            <li><strong>En dólares (Ley local o extranjera):</strong>
+                                <ul>
+                                    <li><strong>Ley local:</strong> Emitidos bajo legislación argentina. Ejemplo: Bonar 2030 (AL30).</li>
+                                    <li><strong>Ley extranjera:</strong> Emitidos bajo legislación internacional, como Nueva York o Londres. Ejemplo: Global 2030 (GD30).</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </li>
+                    <li><strong>b. Por plazo:</strong>
+                        <ul>
+                            <li><strong>Corto plazo:</strong> Vencen en menos de 5 años. Ejemplo: Bonar 2024 (AL24).</li>
+                            <li><strong>Largo plazo:</strong> Vencen en más de 5 años. Ejemplo: Global 2046 (GD46).</li>
+                        </ul>
+                    </li>
+                    <li><strong>c. Por forma de pago:</strong>
+                        <ul>
+                            <li><strong>Bonos con cupón:</strong> Pagan intereses periódicos, como semestrales o anuales.</li>
+                            <li><strong>Bonos bullet:</strong> Pagan el capital y los intereses al vencimiento.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Fondos Comunes de Inversión (FCI) -->
+        <div class="accordion">
+            <button>Fondos Comunes de Inversión (FCI)</button>
+            <div class="panel-content">
+                <p>Vehículos de inversión que agrupan capital de varios inversores para invertir en activos diversos, administrados por expertos.</p>
+
+                <!-- Fondos de Liquidez (Money Market) -->
+                <h4>Fondos de Liquidez (Money Market)</h4>
+                <ul>
+                    <li><strong>Objetivo:</strong> Mantener liquidez y minimizar el riesgo.</li>
+                    <li><strong>Activos:</strong> Instrumentos de corto plazo como plazos fijos, cauciones, letras del Tesoro (Lelites) y cuentas remuneradas.</li>
+                    <li><strong>Riesgo:</strong> Bajo.</li>
+                    <li><strong>Horizonte temporal:</strong> Corto plazo (ideal para inversiones con alta liquidez).</li>
+                    <li><strong>Ejemplo:</strong> Fondos Money Market o T+1.</li>
+                </ul>
+
+                <!-- Fondos de Renta Fija -->
+                <h4>Fondos de Renta Fija</h4>
+                <ul>
+                    <li><strong>Objetivo:</strong> Generar ingresos estables mediante instrumentos de deuda.</li>
+                    <li><strong>Tipos:</strong>
+                        <ul>
+                            <li><strong>En pesos:</strong>
+                                <ul>
+                                    <li>Bonos ajustados por CER (inflación).</li>
+                                    <li>Bonos a tasa fija o variable.</li>
+                                </ul>
+                            </li>
+                            <li><strong>En dólares:</strong> Bonos soberanos y corporativos en dólares.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Riesgo:</strong> Moderado.</li>
+                    <li><strong>Horizonte temporal:</strong> Corto a mediano plazo.</li>
+                    <li><strong>Ejemplo:</strong> FCI en Bonos CER o FCI en Bonos Dólar Linked.</li>
+                </ul>
+
+                <!-- Fondos de Renta Mixta -->
+                <h4>Fondos de Renta Mixta</h4>
+                <ul>
+                    <li><strong>Objetivo:</strong> Diversificar entre instrumentos de renta fija y renta variable.</li>
+                    <li><strong>Activos:</strong> Combinación de bonos, acciones y otros instrumentos financieros.</li>
+                    <li><strong>Riesgo:</strong> Moderado a alto, dependiendo de la proporción de renta variable.</li>
+                    <li><strong>Horizonte temporal:</strong> Mediano a largo plazo.</li>
+                    <li><strong>Ejemplo:</strong> FCI Mixtos Balanceados.</li>
+                </ul>
+
+                <!-- Fondos de Renta Variable -->
+                <h4>Fondos de Renta Variable</h4>
+                <ul>
+                    <li><strong>Objetivo:</strong> Buscar mayores rendimientos a través de la apreciación de capital.</li>
+                    <li><strong>Activos:</strong> Acciones locales, CEDEARs (acciones extranjeras en pesos) y ETFs (fondos cotizados en bolsa).</li>
+                    <li><strong>Riesgo:</strong> Alto, debido a la volatilidad del mercado de acciones.</li>
+                    <li><strong>Horizonte temporal:</strong> Largo plazo.</li>
+                    <li><strong>Ejemplo:</strong> FCI de Acciones o FCI de CEDEARs.</li>
+                </ul>
+
+                <!-- Fondos en Dólares -->
+                <h4>Fondos en Dólares</h4>
+                <ul>
+                    <li><strong>Objetivo:</strong> Protegerse de la devaluación y mantener exposición al dólar.</li>
+                    <li><strong>Activos:</strong> Bonos soberanos y corporativos en dólares, CEDEARs y otros instrumentos dolarizados.</li>
+                    <li><strong>Riesgo:</strong> Depende de los activos subyacentes.</li>
+                    <li><strong>Horizonte temporal:</strong> Corto a largo plazo.</li>
+                    <li><strong>Ejemplo:</strong> FCI Dólar Linked o FCI de Bonos Globales.</li>
+                </ul>
+
+                <!-- Fondos de Infraestructura e Inmobiliarios -->
+                <h4>Fondos de Infraestructura e Inmobiliarios</h4>
+                <ul>
+                    <li><strong>Objetivo:</strong> Obtener rentabilidad de proyectos de infraestructura o inversiones inmobiliarias.</li>
+                    <li><strong>Activos:</strong> Desarrollo de proyectos de obra pública, inmuebles comerciales, residenciales o de oficinas.</li>
+                    <li><strong>Riesgo:</strong> Moderado a alto, dependiendo del tipo de proyecto.</li>
+                    <li><strong>Horizonte temporal:</strong> Largo plazo.</li>
+                    <li><strong>Ejemplo:</strong> Fondos de Desarrollo Inmobiliario.</li>
+                </ul>
+
+                <!-- Fondos de Cobertura -->
+                <h4>Fondos de Cobertura</h4>
+                <ul>
+                    <li><strong>Objetivo:</strong> Protegerse contra riesgos específicos, como inflación o tipo de cambio.</li>
+                    <li><strong>Activos:</strong> Bonos CER, bonos dólar linked, y otros activos ajustados.</li>
+                    <li><strong>Riesgo:</strong> Moderado.</li>
+                    <li><strong>Horizonte temporal:</strong> Corto a mediano plazo.</li>
+                    <li><strong>Ejemplo:</strong> Fondos Ajustados por CER.</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Instrumentos Bancarios -->
+    <section id="instrumentos-bancarios">
+        <h2>Instrumentos Bancarios</h2>
+
+        <!-- Plazo Fijo -->
+        <div class="accordion">
+            <button>Plazo Fijo</button>
+            <div class="panel-content">
+                <p>Depósitos a término que ofrecen una tasa fija de interés. Pueden ser en pesos o en dólares.</p>
+            </div>
+        </div>
+
+        <!-- Plazo Fijo UVA -->
+        <div class="accordion">
+            <button>Plazo Fijo UVA</button>
+            <div class="panel-content">
+                <p>Similar al plazo fijo, pero con mayor liquidez y ajuste por inflación índice CER. Pueden ser precancelables o no.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Instrumentos Alternativos -->
+    <section id="instrumentos-alternativos">
+        <h2>Instrumentos Alternativos</h2>
+
+        <!-- CEDEARs -->
+        <div class="accordion">
+            <button>CEDEARs</button>
+            <div class="panel-content">
+                <p>Los CEDEARs (Certificados de Depósito Argentinos) son instrumentos que representan acciones de empresas extranjeras que cotizan en mercados internacionales.</p>
+                <ul>
+                    <li><strong>Equivalencia:</strong> Cada CEDEAR equivale a una cantidad específica de acciones de una empresa extranjera (por ejemplo, Apple, Tesla, Amazon).</li>
+                    <li><strong>Cotización en Pesos:</strong> Se compran y venden en pesos argentinos, aunque están ligados al tipo de cambio dólar contado con liquidación (CCL).</li>
+                    <li><strong>Rendimiento en Dólares:</strong> Aunque se compran en pesos, su precio está vinculado al valor de la acción en su mercado original y al tipo de cambio, lo que protege contra devaluaciones.</li>
+                    <li><strong>Dividendos:</strong> Algunos CEDEARs pagan dividendos en dólares, lo que agrega una fuente de ingreso adicional.</li>
+                    <li><strong>Flexibilidad:</strong> Liquidez inmediata en el mercado local, sin las restricciones cambiarias aplicadas a operaciones internacionales.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- ETFs -->
+        <div class="accordion">
+            <button>ETFs</button>
+            <div class="panel-content">
+                <p>Los ETFs (Exchange-Traded Funds) son fondos de inversión cotizados en bolsa que agrupan activos diversos y permiten a los inversores comprar participaciones del fondo como si fueran acciones. Aunque en Argentina no se emiten ETFs locales, los inversores pueden acceder a ellos a través de los CEDEARs de ETFs, que funcionan como certificados representativos de ETFs internacionales.</p>
+                <h4>Tipos de ETFs Disponibles como CEDEARs en Argentina:</h4>
+                <ul>
+                    <li><strong>Índices Bursátiles:</strong>
+                        <ul>
+                            <li>Replican el comportamiento de índices globales.</li>
+                            <li>Ejemplo: SPY (S&P 500), QQQ (NASDAQ 100).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Sectores Específicos:</strong>
+                        <ul>
+                            <li>ETFs que agrupan empresas de un sector en particular, como tecnología, salud o energía.</li>
+                            <li>Ejemplo: XLK (Tecnología), XLE (Energía).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Commodities:</strong>
+                        <ul>
+                            <li>ETFs que invierten en materias primas como oro, petróleo o soja.</li>
+                            <li>Ejemplo: GLD (Oro), USO (Petróleo).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Bonos:</strong>
+                        <ul>
+                            <li>Inversiones en renta fija de gobiernos o empresas.</li>
+                            <li>Ejemplo: TLT (Bonos del Tesoro de EE.UU. a largo plazo).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Regionales o Globales:</strong>
+                        <ul>
+                            <li>ETFs que representan mercados específicos o regiones.</li>
+                            <li>Ejemplo: EEM (Mercados Emergentes).</li>
+                        </ul>
+                    </li>
+                    <li><strong>Sostenibles y Temáticos:</strong>
+                        <ul>
+                            <li>ETFs basados en tendencias o valores como sostenibilidad o tecnología emergente.</li>
+                            <li>Ejemplo: ICLN (Energías Limpias).</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Cauciones -->
+        <div class="accordion">
+            <button>Cauciones</button>
+            <div class="panel-content">
+                <p>Las cauciones son préstamos a muy corto plazo (de 1 a 120 días) entre inversores, donde se utiliza una garantía (generalmente títulos valores) para asegurar la operación.</p>
+                <h4>Tipos de Cauciones:</h4>
+                <ul>
+                    <li><strong>Caución Bursátil Fija:</strong>
+                        <ul>
+                            <li>La tasa de interés es fija y no varía durante la operación.</li>
+                            <li>Ejemplo: Una caución a 30 días con una tasa fija del 60% anual.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Caución Garantizada:</strong>
+                        <ul>
+                            <li>Ofrecida por entidades habilitadas en la bolsa, donde la cámara compensadora actúa como intermediaria y asegura el cumplimiento de la operación.</li>
+                            <li>Reduce el riesgo de contraparte.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Letras -->
+        <div class="accordion">
+            <button>Letras</button>
+            <div class="panel-content">
+                <p>Las letras en Argentina son instrumentos de deuda de corto plazo emitidos tanto por el Gobierno Nacional como por las provincias y entidades privadas. Su objetivo principal es obtener financiamiento rápido y ofrecer a los inversores una opción segura y líquida para invertir.</p>
+                <h4>Características Principales:</h4>
+                <ul>
+                    <li><strong>Plazo Corto:</strong> Generalmente vencen entre 30 días y un año.</li>
+                    <li><strong>Rendimiento:</strong> Se determinan con un descuento al valor nominal o mediante intereses explícitos.</li>
+                    <li><strong>Liquidez:</strong> Suelen ser instrumentos de alta liquidez y pueden negociarse en el mercado secundario.</li>
+                    <li><strong>Emitidas por Diversos Entes:</strong>
+                        <ul>
+                            <li>Gobierno Nacional (Letras del Tesoro).</li>
+                            <li>Provincias.</li>
+                            <li>Empresas privadas.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Obligaciones Negociables -->
+        <div class="accordion">
+            <button>Obligaciones Negociables</button>
+            <div class="panel-content">
+                <p>Las Obligaciones Negociables (ONs) son instrumentos de deuda emitidos por empresas privadas, públicas o mixtas para financiarse. Cuando compras una ON, le estás prestando dinero a la empresa emisora a cambio de recibir pagos de intereses y la devolución del capital al vencimiento.</p>
+                <h4>Características:</h4>
+                <ul>
+                    <li><strong>Emisión por Empresas:</strong> Empresas de diversos sectores emiten ONs para financiar proyectos o refinanciar deuda.</li>
+                    <li><strong>Títulos de Deuda:</strong> Representan préstamos realizados por inversores a la empresa emisora.</li>
+                    <li><strong>Plazo Definido:</strong> Las ONs tienen una fecha de vencimiento específica.</li>
+                    <li><strong>Pago de Intereses:</strong> Ofrecen pagos periódicos en forma de cupones con una tasa fija o variable.</li>
+                    <li><strong>Negociación en Mercados Secundarios:</strong> Pueden comprarse y venderse en mercados como BYMA.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Opciones y Futuros -->
+        <div class="accordion">
+            <button>Opciones y Futuros</button>
+            <div class="panel-content">
+                <p>Las opciones y futuros son instrumentos financieros derivados que permiten a los inversores especular o cubrirse ante movimientos en el precio de activos subyacentes.</p>
+                <ul>
+                    <li><strong>Contratos de Futuros:</strong>
+                        <ul>
+                            <li>Acuerdo para comprar o vender un activo en una fecha futura a un precio acordado hoy.</li>
+                            <li>Se utilizan para especular o cubrir riesgos en mercados como el dólar o commodities agrícolas.</li>
+                        </ul>
+                    </li>
+                    <li><strong>Opciones:</strong>
+                        <ul>
+                            <li>Derecho, pero no la obligación, de comprar (call) o vender (put) un activo a un precio predeterminado en el futuro.</li>
+                            <li>Permiten estrategias de inversión más sofisticadas y manejo del riesgo.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Perfil del Inversor -->
+    <section id="perfil-del-inversor" class="visible">
+        <h2>Perfil del Inversor</h2>
+        <div class="profiles-container">
+            <!-- Perfil Conservador -->
+            <div class="profile-card">
+                <div class="profile-icon">
+                    <svg viewBox="0 0 24 24" width="60" height="60">
+                        <path fill="#4CAF50" d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zm-1 9h2v2h-2v-2zm0-6h2v4h-2V9z"/>
+                    </svg>
+                </div>
+                <h2 class="profile-title">Inversor Conservador</h2>
+                <div class="risk-meter">
+                    <div class="risk-level" style="width: 30%; background: #4CAF50;"></div>
+                </div>
+                <p class="profile-description">
+                    El inversor conservador prioriza la seguridad y la preservación del capital por encima del rendimiento. Prefiere inversiones de bajo riesgo como bonos gubernamentales, depósitos a plazo fijo y fondos de mercado monetario. Su principal objetivo es proteger su patrimonio de la inflación mientras mantiene un perfil de riesgo bajo. Suele tener una baja tolerancia a la volatilidad y prefiere rendimientos modestos pero estables.
+                </p>
+            </div>
+
+            <!-- Perfil Moderado -->
+            <div class="profile-card">
+                <div class="profile-icon">
+                    <svg viewBox="0 0 24 24" width="60" height="60">
+                        <path fill="#FF9800" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/>
+                        <path fill="#FF9800" d="M7 12h2v5H7zm4-3h2v8h-2zm4-3h2v11h-2z"/>
+                    </svg>
+                </div>
+                <h2 class="profile-title">Inversor Moderado</h2>
+                <div class="risk-meter">
+                    <div class="risk-level" style="width: 60%; background: #FF9800;"></div>
+                </div>
+                <p class="profile-description">
+                    El inversor moderado busca un equilibrio entre seguridad y rendimiento. Está dispuesto a asumir riesgos calculados para obtener mejores retornos. Su cartera suele incluir una mezcla de acciones, bonos y otros activos de riesgo medio. Comprende y acepta cierta volatilidad en el corto plazo, pero mantiene un enfoque balanceado entre crecimiento y preservación del capital.
+                </p>
+            </div>
+
+            <!-- Perfil Arriesgado -->
+            <div class="profile-card">
+                <div class="profile-icon">
+                    <svg viewBox="0 0 24 24" width="60" height="60">
+                        <path fill="#F44336" d="M13 2.05v3.03c3.39.49 6 3.39 6 6.92 0 .9-.18 1.75-.48 2.54l2.6 1.53c.56-1.24.88-2.62.88-4.07 0-5.18-3.95-9.45-9-9.95zM12 19c-3.87 0-7-3.13-7-7 0-3.53 2.61-6.43 6-6.92V2.05c-5.06.5-9 4.76-9 9.95 0 5.52 4.47 10 9.99 10 3.31 0 6.24-1.61 8.06-4.09l-2.6-1.53C16.17 17.98 14.21 19 12 19z"/>
+                    </svg>
+                </div>
+                <h2 class="profile-title">Inversor Arriesgado</h2>
+                <div class="risk-meter">
+                    <div class="risk-level" style="width: 90%; background: #F44336;"></div>
+                </div>
+                <p class="profile-description">
+                    El inversor arriesgado busca maximizar sus rendimientos y está dispuesto a asumir riesgos significativos. Se siente cómodo con alta volatilidad y puede mantener inversiones a largo plazo sin preocuparse por fluctuaciones temporales. Su cartera suele incluir acciones de crecimiento, mercados emergentes, criptomonedas y otros activos de alto riesgo. Tiene un horizonte de inversión largo y alta tolerancia a las pérdidas temporales.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Sección Test de Perfil -->
+    <section id="test-perfil">
+        <h2>Test de Perfil</h2>
+        <form id="perfil-test">
+            <!-- Pregunta 1 -->
+            <div class="question">
+                <p>1. ¿Cuál es tu objetivo principal al invertir?</p>
+                <div class="slider-container">
+                    <label for="q1">Preservar mi capital y obtener rendimientos estables.</label>
+                    <input type="range" id="q1" name="q1" min="1" max="3" step="1" value="1" required>
+                </div>
+                <div class="range-labels">
+                    <span>Mínimo</span>
+                    <span>Máximo</span>
+                </div>
+            </div>
+
+            <!-- Pregunta 2 -->
+            <div class="question">
+                <p>2. ¿Cómo reaccionas ante la posibilidad de perder parte de tu inversión?</p>
+                <div class="slider-container">
+                    <label for="q2">Me preocuparía mucho y preferiría inversiones seguras.</label>
+                    <input type="range" id="q2" name="q2" min="1" max="3" step="1" value="1" required>
+                </div>
+                <div class="range-labels">
+                    <span>Mínimo</span>
+                    <span>Máximo</span>
+                </div>
+            </div>
+
+            <!-- Pregunta 3 -->
+            <div class="question">
+                <p>3. ¿Cuál es tu horizonte de inversión?</p>
+                <div class="slider-container">
+                    <label for="q3">Corto plazo (menos de 3 años).</label>
+                    <input type="range" id="q3" name="q3" min="1" max="3" step="1" value="1" required>
+                </div>
+                <div class="range-labels">
+                    <span>Mínimo</span>
+                    <span>Máximo</span>
+                </div>
+            </div>
+
+            <!-- Pregunta 4 -->
+            <div class="question">
+                <p>4. ¿Cuál es tu nivel de experiencia en inversiones?</p>
+                <div class="slider-container">
+                    <label for="q4">Principiante, poco conocimiento.</label>
+                    <input type="range" id="q4" name="q4" min="1" max="3" step="1" value="1" required>
+                </div>
+                <div class="range-labels">
+                    <span>Mínimo</span>
+                    <span>Máximo</span>
+                </div>
+            </div>
+
+            <!-- Pregunta 5 -->
+            <div class="question">
+                <p>5. ¿Cuál es tu reacción ante una baja significativa en el mercado?</p>
+                <div class="slider-container">
+                    <label for="q5">Vendería mis inversiones para evitar mayores pérdidas.</label>
+                    <input type="range" id="q5" name="q5" min="1" max="3" step="1" value="1" required>
+                </div>
+                <div class="range-labels">
+                    <span>Mínimo</span>
+                    <span>Máximo</span>
+                </div>
+            </div>
+
+            <!-- Botón de Envío -->
+            <button type="submit">Ver Mi Perfil</button>
+        </form>
+
+        <!-- Resultado del Test -->
+        <div id="test-result"></div>
+    </section>
+
+    <!-- Sección Herramientas -->
+    <section id="herramientas">
+        <h2>Herramientas</h2>
+        <div class="herramientas-accordion">
+            <!-- Calculadora de Inversiones -->
+            <button>Calculadora de Inversiones</button>
+            <div class="herramientas-panel-content">
+                <div class="calculator animation">
+                    <!-- Título duplicado eliminado -->
+                    <!-- <h1>Calculadora de Inversión</h1> -->
+                    <div class="input-group">
+                        <label for="amount">Monto a Invertir:</label>
+                        <input type="number" id="amount" min="0" step="0.01" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="currency">Moneda:</label>
+                        <select id="currency">
+                            <option value="USD">USD - Dólar Estadounidense</option>
+                            <option value="EUR">EUR - Euro</option>
+                            <option value="GBP">GBP - Libra Esterlina</option>
+                            <option value="JPY">JPY - Yen Japonés</option>
+                            <option value="ARS">ARS - Peso Argentino</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="interestType">Tipo de Interés:</label>
+                        <select id="interestType">
+                            <option value="simple">Interés Simple</option>
+                            <option value="compound">Interés Compuesto</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group" id="capitalizationGroup">
+                        <label for="capitalization">Frecuencia de Capitalización:</label>
+                        <select id="capitalization">
+                            <option value="1">Mensual</option>
+                            <option value="2">Bimestral</option>
+                            <option value="3">Trimestral</option>
+                            <option value="4">Cuatrimestral</option>
+                            <option value="6">Semestral</option>
+                            <option value="12">Anual</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="rate">Tasa de Interés Anual (%):</label>
+                        <input type="number" id="rate" min="0" max="100" step="0.01" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="time">Tiempo (años):</label>
+                        <input type="number" id="time" min="0" step="0.1" required>
+                    </div>
+
+                    <button onclick="calculateInvestment()">Calcular</button>
+                    <button id="download-excel" onclick="downloadExcel()" disabled>Descargar a Excel</button>
+                    <div id="result"></div>
+                </div>
+            </div>
+
+            <!-- Generador de Prompt de Inversiones -->
+            <button>Generador de Prompt de Inversiones</button>
+            <div class="herramientas-panel-content" id="generador-prompt">
+                <div class="container">
+                    <h1>Generador de Prompts Financieros</h1>
+                    
+                    <div class="form-group">
+                        <label>Tipo de Instrumento Financiero:</label>
+                        <input type="text" id="instrumento" placeholder="Ej: bono, acción, ETF">
+                    </div>
+                    <div class="form-group">
+                        <label>Denominación:</label>
+                        <input type="text" id="denominacion" placeholder="Ej: AAPL, GOOGL">
+                    </div>
+                    <div class="form-group">
+                        <label>Período (días):</label>
+                        <input type="number" id="dias" placeholder="Ej: 30, 90, 360">
+                    </div>
+                    <div class="form-group">
+                        <label>Moneda:</label>
+                        <input type="text" id="moneda" placeholder="Ej: USD, EUR, ARS">
+                    </div>
+                    <div class="form-group">
+                        <label>Mercado:</label>
+                        <input type="text" id="mercado" placeholder="Ej: NYSE, NASDAQ">
+                    </div>
+                    <div class="button-container">
+                        <button class="button" onclick="generarPrompt()">Generar Prompt</button>
+                        <button class="button" onclick="copiarPrompt()">Copiar Prompt</button>
+                    </div>
+                    <div class="result" id="resultado"></div>
+                    <button class="chatgpt-button" onclick="window.open('https://chat.openai.com/', '_blank')">Ir a ChatGPT</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Botón Volver Arriba -->
+    <a href="#introduccion" id="back-to-top">&#8679;</a>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2023 Guía de Inversiones en Argentina</p>
+        <p class="aviso">La información proporcionada es solo para fines educativos
+        y no constituye asesoramiento financiero. Consulta con un profesional antes
+        de invertir.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <!-- Incluye jQuery y jQuery UI al final del body -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Funcionalidad del menú en móviles
+            $('.menu-toggle').click(function() {
+                $('nav ul').slideToggle();
+            });
+
+            // Desplazamiento suave
+            $('a[href^="#"]').on('click', function(e) {
+                e.preventDefault();
+                var target = this.hash;
+                if (target) {
+                    $('html, body').animate({
+                        scrollTop: $(target).offset().top - 100 // Ajuste para header fijo
+                    }, 600, function(){
+                        window.location.hash = target;
+                    });
+                }
+                // Ocultar menú en móvil al hacer clic
+                if ($(window).width() < 769) {
+                    $('nav ul').slideUp();
+                }
+            });
+
+            // Botón Volver Arriba
+            $(window).scroll(function() {
+                if ($(this).scrollTop() > 300) {
+                    $('#back-to-top').fadeIn();
+                } else {
+                    $('#back-to-top').fadeOut();
+                }
+            });
+
+            $('#back-to-top').click(function(e) {
+                e.preventDefault();
+                $('html, body').animate({scrollTop: 0}, 600);
+            });
+
+            // Funcionalidad de los botones desplegables (Acordeones)
+            $('.accordion button').click(function() {
+                $(this).toggleClass('active');
+                $(this).next('.panel-content').slideToggle(300);
+            });
+
+            // Funcionalidad para la sección Perfil del Inversor
+            $('.profile-card').click(function() {
+                // Si ya está activo, desactivarlo
+                if ($(this).hasClass('active')) {
+                    $(this).removeClass('active');
+                } else {
+                    // Cerrar otros perfiles activos
+                    $('.profile-card').removeClass('active');
+                    // Activar el perfil clickeado
+                    $(this).addClass('active');
+                }
+            });
+
+            // Funcionalidad del Botón "Contraer Todo"
+            $('#collapse-all').click(function() {
+                // Verificar si la sección está visible
+                if ($('#perfil-del-inversor').hasClass('visible')) {
+                    // Ocultar todas las tarjetas activas
+                    $('.profile-card.active').removeClass('active');
+                    // Ocultar la sección Perfil del Inversor
+                    $('#perfil-del-inversor').removeClass('visible').addClass('hidden');
+                    // Cambiar el texto del botón
+                    $(this).text('Expandir Todo');
+                    // Desplazar la página hacia arriba suavemente
+                    $('html, body').animate({scrollTop: 0}, 600);
+                } else {
+                    // Mostrar la sección Perfil del Inversor
+                    $('#perfil-del-inversor').removeClass('hidden').addClass('visible');
+                    // Cambiar el texto del botón
+                    $(this).text('Contraer Todo');
+                }
+            });
+
+            // Funcionalidad del Test de Perfil
+            $('#perfil-test').submit(function(e) {
+                e.preventDefault();
+                var score = 0;
+
+                // Obtener respuestas de sliders
+                for (var i = 1; i <= 5; i++) {
+                    var value = parseInt($('#q' + i).val());
+                    score += value;
+                }
+
+                // Determinar perfil
+                var perfil = '';
+                if (score <= 7) {
+                    perfil = 'Conservador';
+                } else if (score > 7 && score <= 12) {
+                    perfil = 'Moderado';
+                } else {
+                    perfil = 'Arriesgado';
+                }
+
+                // Mostrar resultado con la clase destacada
+                $('#test-result').html('<h3>Tu Perfil de Inversor es: <span class="highlighted-profile">' + perfil + '</span></h3>');
+                $('#test-result').fadeIn();
+            });
+
+            // Funcionalidad para resaltar la opción seleccionada en el test de perfil
+            $('#test-perfil .slider-container input[type="range"]').on('input change', function() {
+                // Aquí podrías añadir alguna visualización adicional si lo deseas
+            });
+
+            // Funcionalidad de los acordiones en Herramientas
+            $('.herramientas-accordion button').click(function() {
+                $(this).toggleClass('active');
+                $(this).next('.herramientas-panel-content').slideToggle(300);
+            });
+        });
+
+        // Variables para almacenar los resultados de la calculadora
+        let investmentData = {};
+
+        // Funciones de la Calculadora de Inversión
+        function calculateInvestment() {
+            // Obtener valores de los inputs
+            const amount = parseFloat(document.getElementById('amount').value);
+            const currency = document.getElementById('currency').value;
+            const interestType = document.getElementById('interestType').value;
+            const rate = parseFloat(document.getElementById('rate').value) / 100;
+            const time = parseFloat(document.getElementById('time').value);
+            const capitalization = parseInt(document.getElementById('capitalization').value);
+            const resultDiv = document.getElementById('result');
+            const downloadButton = document.getElementById('download-excel');
+
+            // Validar inputs
+            if (!amount || !rate || !time) {
+                resultDiv.innerHTML = "Por favor, complete todos los campos";
+                downloadButton.disabled = true;
+                return;
+            }
+
+            let finalAmount = 0;
+            let interest = 0;
+            let periodicInterests = [];
+
+            // Formatear números
+            const formatter = new Intl.NumberFormat('es-ES', {
+                style: 'currency',
+                currency: currency,
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+
+            if (interestType === 'simple') {
+                const interestPerPeriod = (amount * rate * (capitalization / 12));
+                const periods = Math.ceil(time * 12 / capitalization);
+                
+                for (let i = 1; i <= periods; i++) {
+                    periodicInterests.push(interestPerPeriod);
+                }
+                
+                interest = amount * rate * time;
+                finalAmount = amount + interest;
+            } else {
+                const periodsPerYear = 12 / capitalization;
+                const totalPeriods = Math.ceil(time * periodsPerYear);
+                const ratePerPeriod = rate / periodsPerYear;
+                
+                let currentAmount = amount;
+                for (let i = 1; i <= totalPeriods; i++) {
+                    const newAmount = currentAmount * (1 + ratePerPeriod);
+                    const periodInterest = newAmount - currentAmount;
+                    periodicInterests.push(periodInterest);
+                    currentAmount = newAmount;
+                }
+                
+                finalAmount = currentAmount;
+                interest = finalAmount - amount;
+            }
+
+            // Guardar los datos en la variable investmentData
+            investmentData = {
+                "Capital Inicial": formatter.format(amount),
+                "Intereses Generados": formatter.format(interest),
+                "Monto Final": formatter.format(finalAmount),
+                "Frecuencia de Capitalización": `Cada ${capitalization} mes(es)`,
+                "Intereses por Período": periodicInterests.map((pi, idx) => `Período ${idx + 1}: ${formatter.format(pi)}`)
+            };
+
+            // Generar HTML para los intereses periódicos
+            let periodicInterestsHTML = '<div class="interest-details"><h4>Intereses por período:</h4>';
+            periodicInterests.forEach((periodInterest, index) => {
+                periodicInterestsHTML += `
+                    <div class="interest-period">
+                        Período ${index + 1}: ${formatter.format(periodInterest)}
+                    </div>
+                `;
+            });
+            periodicInterestsHTML += '</div>';
+
+            // Mostrar resultados
+            resultDiv.innerHTML = `
+                <h3>Resultados de la Inversión</h3>
+                <p>Capital Inicial: ${formatter.format(amount)}</p>
+                <p>Intereses Generados: ${formatter.format(interest)}</p>
+                <p>Monto Final: ${formatter.format(finalAmount)}</p>
+                <p>Frecuencia de Capitalización: Cada ${capitalization} mes(es)</p>
+                ${periodicInterestsHTML}
+            `;
+
+            // Habilitar el botón de descarga
+            downloadButton.disabled = false;
+
+            // Agregar animación
+            resultDiv.classList.remove('animation');
+            void resultDiv.offsetWidth; // Trigger reflow
+            resultDiv.classList.add('animation');
+        }
+
+        // Función para descargar los resultados como XLSX
+        function downloadExcel() {
+            if (!investmentData || Object.keys(investmentData).length === 0) {
+                alert("No hay resultados para descargar.");
+                return;
+            }
+
+            // Crear una nueva hoja de cálculo
+            const wb = XLSX.utils.book_new();
+            wb.Props = {
+                Title: "Resultados de Inversión",
+                Subject: "Calculadora de Inversión",
+                Author: "Guía de Inversiones en Argentina",
+                CreatedDate: new Date()
+            };
+
+            // Datos principales
+            const mainData = [
+                ["Descripción", "Valor"],
+                ["Capital Inicial", investmentData["Capital Inicial"]],
+                ["Intereses Generados", investmentData["Intereses Generados"]],
+                ["Monto Final", investmentData["Monto Final"]],
+                ["Frecuencia de Capitalización", investmentData["Frecuencia de Capitalización"]]
+            ];
+
+            // Crear hoja para datos principales
+            const ws_main = XLSX.utils.aoa_to_sheet(mainData);
+            XLSX.utils.book_append_sheet(wb, ws_main, "Resultados");
+
+            // Agregar intereses por período en una nueva hoja
+            if (investmentData["Intereses por Período"]) {
+                const periodData = [
+                    ["Intereses por Período"],
+                    ["Descripción", "Valor"]
+                ];
+                investmentData["Intereses por Período"].forEach(item => {
+                    const [descripcion, valor] = item.split(": ");
+                    periodData.push([descripcion, valor]);
+                });
+
+                const ws_period = XLSX.utils.aoa_to_sheet(periodData);
+                XLSX.utils.book_append_sheet(wb, ws_period, "Intereses_Periodo");
+            }
+
+            // Generar archivo XLSX y descargar
+            XLSX.writeFile(wb, `Resultados_Inversion_${new Date().toISOString().slice(0,19).replace(/[:T]/g,"-")}.xlsx`);
+        }
+
+        // Validar inputs para solo permitir números
+        document.querySelectorAll('input[type="number"]').forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value < 0) this.value = 0;
+            });
+        });
+
+        // Funciones del Generador de Prompts Financieros
+        function generarPrompt() {
+            const instrumento = document.getElementById('instrumento').value;
+            const denominacion = document.getElementById('denominacion').value;
+            const dias = document.getElementById('dias').value;
+            const moneda = document.getElementById('moneda').value;
+            const mercado = document.getElementById('mercado').value;
+
+            const parteInicial = "Como experto en análisis financiero, necesito que me proporciones ";
+            let parteVariable = `un análisis detallado del ${instrumento || 'instrumento financiero'} ${denominacion || ''} `;
+            parteVariable += `en los últimos ${dias || '30'} días de operación `;
+            parteVariable += `en ${moneda || 'USD'} `;
+            parteVariable += `del mercado ${mercado || 'NYSE'}. `;
+            const parteFinal = "Incluye en tu análisis: 1) Tendencia general del precio, 2) Volatilidad observada, " +
+                             "3) Volúmenes de negociación relevantes, 4) Eventos significativos que hayan afectado su " +
+                             "comportamiento, y 5) Una recomendación técnica basada en los datos analizados.";
+
+            const promptCompleto = parteInicial + parteVariable + parteFinal;
+            document.getElementById('resultado').textContent = promptCompleto;
+        }
+
+        function copiarPrompt() {
+            const resultado = document.getElementById('resultado');
+            const texto = resultado.textContent;
+            
+            if (texto) {
+                navigator.clipboard.writeText(texto).then(() => {
+                    alert('¡Prompt copiado al portapapeles!');
+                }).catch(err => {
+                    console.error('Error al copiar:', err);
+                    alert('No se pudo copiar el texto. Por favor, inténtalo nuevamente.');
+                });
+            } else {
+                alert('Primero genera un prompt para poder copiarlo.');
+            }
+        }
+    </script>
+</body>
+</html>
