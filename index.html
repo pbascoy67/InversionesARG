@@ -598,35 +598,7 @@
             100% { opacity: 1; }
         }
 
-        /* Botón "Contraer Todo" */
-        #collapse-all {
-            position: fixed;
-            top: 50%;
-            left: 0;
-            transform: translateY(-50%);
-            background-color: var(--element-bg);
-            color: var(--text-color);
-            padding: 10px 15px;
-            border-top-right-radius: var(--border-radius);
-            border-bottom-right-radius: var(--border-radius);
-            cursor: pointer;
-            z-index: 1001;
-            transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
-            font-size: 14px;
-            box-shadow:
-                5px 5px 10px var(--shadow-dark),
-                -5px -5px 10px var(--shadow-light);
-            font-family: var(--font-body);
-        }
-
-        #collapse-all:hover {
-            background-color: var(--element-bg-dark);
-            transform: translateY(-50%) scale(1.05);
-            box-shadow:
-                inset 5px 5px 10px var(--shadow-dark),
-                inset -5px -5px 10px var(--shadow-light);
-        }
-
+       
         /* Transición suave para mostrar/ocultar la sección */
         #perfil-del-inversor {
             transition: opacity 0.5s ease, max-height 0.5s ease, margin 0.5s ease, padding 0.5s ease;
@@ -1443,6 +1415,15 @@
             </div>
         </div>
     </section>
+
+    <!-- Criptomonedas -->
+<div class="accordion">
+    <button>Criptomonedas</button>
+    <div class="panel-content">
+        <p>Las criptomonedas son monedas digitales descentralizadas que utilizan tecnología blockchain para garantizar transacciones seguras y transparentes sin necesidad de intermediarios como bancos. Funcionan mediante redes de computadoras que verifican y registran cada operación en un libro mayor público. Su valor depende de la oferta, la demanda y la confianza del mercado. Bitcoin fue la primera criptomoneda creada en 2009, seguida por muchas otras como Ethereum y Ripple. Se usan para pagos, inversión y almacenamiento de valor, aunque son volátiles y no están reguladas en muchos países.</p>
+        <p>Las criptomonedas se comercializan principalmente a través de exchanges, plataformas digitales que permiten comprar, vender o intercambiar criptomonedas por dinero fiduciario (como dólares) u otras criptomonedas. Algunos ejemplos de exchanges son Binance, Buenbit, SatoshiTango.</p>
+    </div>
+</div>
 
     <!-- Sección Perfil del Inversor -->
     <section id="perfil-del-inversor" class="visible">
