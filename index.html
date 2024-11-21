@@ -10,6 +10,9 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
     <!-- SheetJS para exportar a Excel -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <!-- Bibliotecas adicionales para Criptomonedas -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/regression@2.0.1/dist/regression.min.js"></script>
     <!-- Estilos CSS -->
     <style>
         /* Definición de variables para facilitar cambios futuros */
@@ -60,7 +63,7 @@
             justify-content: space-between;
         }
 
-        /* Eliminado el logo para maximizar espacio */
+        /* Logo eliminado para maximizar espacio */
 
         nav {
             /* Se mantiene flex para alinear correctamente */
@@ -598,7 +601,6 @@
             100% { opacity: 1; }
         }
 
-       
         /* Transición suave para mostrar/ocultar la sección */
         #perfil-del-inversor {
             transition: opacity 0.5s ease, max-height 0.5s ease, margin 0.5s ease, padding 0.5s ease;
@@ -1002,6 +1004,87 @@
                 width: 100%;
             }
         }
+
+        /* Estilos para el Seguimiento BTC/USD dentro de Criptomonedas */
+        .btc-container {
+            background-color: var(--element-bg-light);
+            padding: 2rem;
+            border-radius: var(--border-radius);
+            box-shadow:
+                5px 5px 15px var(--shadow-dark),
+                -5px -5px 15px var(--shadow-light);
+            color: var(--text-color-dark);
+            font-family: var(--font-body);
+            margin-top: 20px;
+        }
+
+        .btc-container h1 {
+            text-align: center;
+            color: var(--text-color-dark);
+            margin-bottom: 1rem;
+            font-size: 1.8rem;
+            font-family: var(--font-title);
+        }
+
+        .btc-container .price {
+            font-size: 2rem;
+            font-weight: bold;
+            margin: 1rem 0;
+            color: #4CAF50;
+        }
+
+        .btc-container .change-24h, .btc-container .max-price {
+            font-size: 1.2rem;
+            margin: 0.5rem 0;
+        }
+
+        .btc-container .positive {
+            color: #4CAF50;
+        }
+
+        .btc-container .negative {
+            color: #FF5252;
+        }
+
+        .btc-container .source, .btc-container .timestamp {
+            font-size: 0.9rem;
+            color: #90A4AE;
+            margin: 0.5rem 0;
+        }
+
+        .btc-container .chart-container {
+            margin: 2rem 0;
+            height: 300px;
+        }
+
+        .btc-container .update-btn {
+            background-color: var(--button-bg);
+            border: none;
+            color: var(--button-text-color);
+            padding: 0.8rem 1.5rem;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 1rem;
+            margin: 4px 2px;
+            cursor: pointer;
+            border-radius: var(--border-radius);
+            transition: background-color 0.3s;
+        }
+
+        .btc-container .update-btn:hover {
+            background-color: var(--button-bg-hover);
+        }
+
+        .btc-container .loading {
+            animation: pulse 1s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
     </style>
 </head>
 <body>
@@ -1244,6 +1327,29 @@
                 </ul>
             </div>
         </div>
+
+        <!-- Criptomonedas -->
+        <div class="accordion">
+            <button>Criptomonedas</button>
+            <div class="panel-content">
+                <p>Las criptomonedas son monedas digitales descentralizadas que utilizan tecnología blockchain para garantizar transacciones seguras y transparentes sin necesidad de intermediarios como bancos. Funcionan mediante redes de computadoras que verifican y registran cada operación en un libro mayor público. Su valor depende de la oferta, la demanda y la confianza del mercado. Bitcoin fue la primera criptomoneda creada en 2009, seguida por muchas otras como Ethereum y Ripple. Se usan para pagos, inversión y almacenamiento de valor, aunque son volátiles y no están reguladas en muchos países.</p>
+                <p>Las criptomonedas se comercializan principalmente a través de exchanges, plataformas digitales que permiten comprar, vender o intercambiar criptomonedas por dinero fiduciario (como dólares) u otras criptomonedas. Algunos ejemplos de exchanges son Binance, Buenbit, SatoshiTango.</p>
+                
+                <!-- Agregar el contenido de Seguimiento BTC/USD -->
+                <div class="btc-container">
+                    <h1>Precio BTC/USD</h1>
+                    <div id="price" class="price">Cargando...</div>
+                    <div id="change24h" class="change-24h">Variación 24h: Cargando...</div>
+                    <div id="maxPrice" class="max-price">Máximo 24h: Cargando...</div>
+                    <div id="source" class="source">Fuente: Binance API</div>
+                    <div id="timestamp" class="timestamp">Última actualización: --:--</div>
+                    <div class="chart-container">
+                        <canvas id="priceChart"></canvas>
+                    </div>
+                    <button id="updateBtn" class="update-btn">Actualizar Precio</button>
+                </div>
+            </div>
+        </div>
     </section>
 
     <!-- Sección Instrumentos Bancarios -->
@@ -1415,15 +1521,6 @@
             </div>
         </div>
     </section>
-
-    <!-- Criptomonedas -->
-<div class="accordion">
-    <button>Criptomonedas</button>
-    <div class="panel-content">
-        <p>Las criptomonedas son monedas digitales descentralizadas que utilizan tecnología blockchain para garantizar transacciones seguras y transparentes sin necesidad de intermediarios como bancos. Funcionan mediante redes de computadoras que verifican y registran cada operación en un libro mayor público. Su valor depende de la oferta, la demanda y la confianza del mercado. Bitcoin fue la primera criptomoneda creada en 2009, seguida por muchas otras como Ethereum y Ripple. Se usan para pagos, inversión y almacenamiento de valor, aunque son volátiles y no están reguladas en muchos países.</p>
-        <p>Las criptomonedas se comercializan principalmente a través de exchanges, plataformas digitales que permiten comprar, vender o intercambiar criptomonedas por dinero fiduciario (como dólares) u otras criptomonedas. Algunos ejemplos de exchanges son Binance, Buenbit, SatoshiTango.</p>
-    </div>
-</div>
 
     <!-- Sección Perfil del Inversor -->
     <section id="perfil-del-inversor" class="visible">
@@ -1977,6 +2074,149 @@
                 alert('Primero genera un prompt para poder copiarlo.');
             }
         }
+    </script>
+
+    <!-- Scripts para Criptomonedas (Seguimiento BTC/USD) -->
+    <script>
+        let priceChart;
+
+        async function fetchBTCPrice() {
+            try {
+                const [priceResponse, changeResponse, klineResponse] = await Promise.all([
+                    fetch('https://api.binance.com/api/v3/ticker/price?symbol=BTCUSDT'),
+                    fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT'),
+                    fetch('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1h&limit=24')
+                ]);
+
+                const priceData = await priceResponse.json();
+                const changeData = await changeResponse.json();
+                const klineData = await klineResponse.json();
+                
+                const price = parseFloat(priceData.price).toFixed(2);
+                document.getElementById('price').textContent = `$${price}`;
+                
+                const change24h = parseFloat(changeData.priceChangePercent).toFixed(2);
+                const changeElement = document.getElementById('change24h');
+                changeElement.textContent = `Variación 24h: ${change24h}%`;
+                changeElement.className = 'change-24h ' + (change24h >= 0 ? 'positive' : 'negative');
+
+                // Encontrar el precio máximo y su hora
+                const maxPrice = Math.max(...klineData.map(k => parseFloat(k[2])));
+                const maxPriceKline = klineData.find(k => parseFloat(k[2]) === maxPrice);
+                const maxTime = new Date(maxPriceKline[0]);
+                const maxTimeString = `${String(maxTime.getUTCHours()).padStart(2, '0')}:${String(maxTime.getUTCMinutes()).padStart(2, '0')}`;
+                document.getElementById('maxPrice').textContent = `Máximo 24h: $${maxPrice.toFixed(2)} (${maxTimeString} UTC)`;
+                
+                const now = new Date();
+                const timeString = now.toLocaleTimeString('es-AR', { hour12: false }).slice(0, -3);
+                document.getElementById('timestamp').textContent = `Última actualización: ${timeString}`;
+
+                const labels = klineData.map(k => {
+                    const date = new Date(k[0]);
+                    return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+                });
+
+                const prices = klineData.map(k => parseFloat(k[4]));
+
+                const points = prices.map((price, index) => [index, price]);
+                const result = regression.linear(points);
+                const trendlineData = result.points.map(point => point[1]);
+
+                if (priceChart) {
+                    priceChart.destroy();
+                }
+
+                const ctx = document.getElementById('priceChart').getContext('2d');
+                priceChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Precio BTC/USD',
+                            data: prices,
+                            borderColor: '#4CAF50',
+                            backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                            borderWidth: 2,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            pointBackgroundColor: '#4CAF50'
+                        },
+                        {
+                            label: 'Línea de Tendencia',
+                            data: trendlineData,
+                            borderColor: '#FFA726',
+                            borderWidth: 2,
+                            borderDash: [5, 5],
+                            fill: false,
+                            pointRadius: 0,
+                            tension: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        },
+                        plugins: {
+                            legend: {
+                                labels: {
+                                    color: '#FFFFFF'
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(255, 255, 255, 0.9)',
+                                titleColor: '#1B2E3C',
+                                bodyColor: '#1B2E3C',
+                                titleFont: {
+                                    size: 14,
+                                    weight: 'bold'
+                                },
+                                bodyFont: {
+                                    size: 13
+                                },
+                                padding: 10,
+                                displayColors: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                ticks: {
+                                    color: '#FFFFFF'
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            },
+                            x: {
+                                ticks: {
+                                    color: '#FFFFFF'
+                                },
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)'
+                                }
+                            }
+                        }
+                    }
+                });
+                
+                document.getElementById('price').classList.remove('loading');
+            } catch (error) {
+                document.getElementById('price').textContent = 'Error al obtener el precio';
+                console.error('Error:', error);
+            }
+        }
+
+        fetchBTCPrice();
+        setInterval(fetchBTCPrice, 10000);
+
+        document.getElementById('updateBtn').addEventListener('click', () => {
+            document.getElementById('price').classList.add('loading');
+            fetchBTCPrice();
+        });
     </script>
 </body>
 </html>
