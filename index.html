@@ -4,20 +4,26 @@
   <meta charset="UTF-8">
   <title>Guía de Inversiones en Argentina</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Enlace a Google Fonts -->
+  
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&family=Roboto:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
-  <!-- Enlaces para jQuery UI -->
+  
+  <!-- jQuery UI -->
   <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+  
   <!-- SheetJS para exportar a Excel -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-  <!-- Bibliotecas adicionales para Criptomonedas -->
+  
+  <!-- Chart.js y regression.js para Criptomonedas -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/regression@2.0.1/dist/regression.min.js"></script>
-  <!-- Estilos CSS -->
+  
   <style>
-    /* Definición de variables para facilitar cambios futuros */
+    /************************************************************
+      VARIABLES Y ESTILOS GENERALES
+    *************************************************************/
     :root {
-      --bg-color: #005f6a; /* Azul petróleo */
+      --bg-color: #005f6a;         /* Azul petróleo */
       --bg-color-light: #007b8c;
       --bg-color-dark: #00424c;
       --element-bg: #005f6a;
@@ -34,87 +40,182 @@
       --border-radius: 15px;
       --font-title: 'Roboto', sans-serif;
       --font-body: 'Open Sans', sans-serif;
-      --font-generador: 'Poppins', sans-serif;
+
+      /* Extras para resaltar y niveles de riesgo */
+      --highlight-color: #FFD700;  /* Dorado */
+      --positive-color: #4CAF50;   /* Verde */
+      --warning-color: #FF9800;    /* Naranja */
+      --danger-color: #F44336;     /* Rojo */
     }
-    /* Estilos generales */
+
     body {
       font-family: var(--font-body);
       margin: 0;
       padding: 0;
-      color: var(--text-color-dark);
       background-color: var(--bg-color);
+      color: var(--text-color-dark);
       display: flex;
       flex-direction: column;
       min-height: 100vh;
+      overflow: hidden; /* Evita scroll global */
     }
-    /* Header y navegación */
+
+    /* Placeholders en un blanco suave */
+    ::-webkit-input-placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    :-ms-input-placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    ::-ms-input-placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+    ::placeholder {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    /************************************************************
+      CABECERA
+    *************************************************************/
     header {
       background-color: var(--element-bg);
-      padding: 10px 20px;
-      position: fixed;
-      width: 100%;
-      top: 0;
-      z-index: 1000;
+      padding: 20px;
+      text-align: center;
       box-shadow: 0 4px 8px var(--shadow-dark);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      z-index: 1000;
     }
-    nav { }
-    nav ul {
-      list-style-type: none;
-      padding: 0;
+    header h1 {
       margin: 0;
-      display: flex;
-      align-items: center;
-    }
-    nav ul li {
-      margin-left: 15px;
-    }
-    nav ul li a {
       color: var(--text-color);
-      text-decoration: none;
-      font-weight: 600;
-      padding: 8px 12px;
+      font-family: var(--font-title);
+      font-size: 1.8rem;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+    }
+    header p {
+      margin: 5px 0 0 0;
+      color: var(--text-color-secondary);
+      font-size: 0.9rem;
+    }
+
+    /************************************************************
+      DASHBOARD (TARJETAS)
+    *************************************************************/
+    #dashboard {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 20px;
+      padding: 20px;
+      flex: 1;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    .dashboard-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--bg-color-dark);
       border-radius: var(--border-radius);
+      box-shadow:
+        5px 5px 10px var(--shadow-dark),
+        -5px -5px 10px var(--shadow-light);
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-align: center;
+      padding: 15px;
+      overflow: hidden;
+      position: relative;
+      color: var(--text-color);
+    }
+    .dashboard-card:hover {
+      transform: translateY(-5px);
+      box-shadow:
+        10px 10px 20px var(--shadow-dark),
+        -10px -10px 20px var(--shadow-light);
+    }
+    .dashboard-card h2 {
+      margin-top: 10px;
+      margin-bottom: 0;
+      color: #ffffff;
+      font-family: var(--font-title);
+      font-size: 1.2rem;
+    }
+    .dashboard-card .card-icon {
+      width: 60px;
+      height: 60px;
+      fill: none;
+      stroke: #ffffff;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+    #empty-slot {
+      background: transparent;
+      pointer-events: none;
+      box-shadow: none;
+    }
+
+    /************************************************************
+      SECCIONES DE CONTENIDO
+    *************************************************************/
+    .section-content {
+      display: none; /* Oculto por defecto */
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      background-color: var(--bg-color);
+      padding: 20px;
+      box-sizing: border-box;
+      z-index: 2000;
+      animation: fadeIn 0.5s;
+    }
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+    .section-content h2 {
+      text-align: center;
+      font-family: var(--font-title);
+      margin-top: 0;
+      margin-bottom: 20px;
+      color: var(--text-color);
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+      font-size: 28px;
+    }
+    .section-navigation {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 20px;
+      margin-top: 20px;
+    }
+    .section-navigation button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: var(--border-radius);
+      background-color: var(--button-bg);
+      color: var(--button-text-color);
+      font-size: 1rem;
+      cursor: pointer;
       transition: background-color 0.3s, box-shadow 0.3s;
-      display: block;
-      background: var(--element-bg);
       box-shadow:
         5px 5px 10px var(--shadow-dark),
         -5px -5px 10px var(--shadow-light);
       font-family: var(--font-body);
     }
-    nav ul li a:hover {
-      background-color: var(--element-bg-dark);
+    .section-navigation button:hover {
+      background: var(--button-bg-hover);
       box-shadow:
         inset 5px 5px 10px var(--shadow-dark),
         inset -5px -5px 10px var(--shadow-light);
     }
-    /* Secciones */
-    section {
-      padding: 120px 20px 40px; /* Ajuste del padding superior para el header fijo */
-      max-width: 1000px;
-      margin: auto;
-      background: var(--bg-color);
-      color: var(--text-color-dark);
-    }
-    section h2 {
-      color: var(--text-color);
-      margin-top: 0;
-      text-align: center;
-      font-size: 28px;
-      margin-bottom: 20px;
-      font-family: var(--font-title);
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-    }
-    section h3, section h4, section h5 {
-      color: var(--text-color-dark);
-      margin-top: 20px;
-      text-align: center;
-      font-family: var(--font-title);
-    }
-    /* Botones desplegables (Acordeones) */
+
+    /************************************************************
+      ACORDEONES
+    *************************************************************/
     .accordion {
       margin-bottom: 20px;
     }
@@ -166,254 +267,30 @@
       color: var(--text-color-dark);
       font-family: var(--font-body);
     }
-    /* Animaciones */
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
+
+    /************************************************************
+      INTRODUCCIÓN
+    *************************************************************/
+    #introduccion p,
+    #introduccion ul,
+    #introduccion li {
+      font-size: 16px;
+      line-height: 1.6;
+      margin: 0 0 10px;
+      color: var(--text-color-dark);
     }
-    /* Botón Volver Arriba */
-    #back-to-top {
-      position: fixed;
-      bottom: 40px;
-      right: 40px;
-      background-color: var(--element-bg);
-      color: var(--text-color);
-      padding: 10px 15px;
-      border-radius: 50%;
-      text-decoration: none;
-      font-size: 18px;
-      display: none;
-      z-index: 1000;
-      transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
-      box-shadow:
-        5px 5px 10px var(--shadow-dark),
-        -5px -5px 10px var(--shadow-light);
-      font-family: var(--font-body);
-    }
-    #back-to-top:hover {
+    .conceptos-basicos {
       background-color: var(--element-bg-dark);
-      box-shadow:
-        inset 5px 5px 10px var(--shadow-dark),
-        inset -5px -5px 10px var(--shadow-light);
-      transform: scale(1.1);
-    }
-    /* Footer */
-    footer {
-      background-color: var(--element-bg);
-      color: var(--text-color-secondary);
-      text-align: center;
-      padding: 20px;
-      margin-top: 40px;
-      font-size: 14px;
-      box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
-      font-family: var(--font-body);
-    }
-    footer .aviso {
-      font-size: 12px;
-      margin-top: 10px;
-      color: #999;
-    }
-    /* Enlaces */
-    a {
-      color: var(--text-color);
-      text-decoration: none;
-      transition: color 0.3s;
-      font-family: var(--font-body);
-    }
-    a:hover {
-      color: var(--element-bg-light);
-      text-decoration: underline;
-    }
-    /* Responsividad */
-    @media (max-width: 768px) {
-      nav ul {
-        display: none;
-        position: absolute;
-        background-color: var(--element-bg);
-        top: 60px;
-        right: 20px;
-        width: 200px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        flex-direction: column;
-        border-radius: var(--border-radius);
-      }
-      nav ul li {
-        display: block;
-        margin: 0;
-      }
-      nav ul li a {
-        display: block;
-        padding: 10px 15px;
-      }
-      .menu-toggle {
-        display: inline-block;
-        cursor: pointer;
-        font-size: 24px;
-        margin-left: 20px;
-        color: var(--text-color);
-        font-family: var(--font-body);
-      }
-    }
-    @media (min-width: 769px) {
-      .menu-toggle {
-        display: none;
-      }
-    }
-    /* Estilos para la Calculadora */
-    #calculadora, #generador-prompt {
-      padding: 120px 20px 40px;
-      max-width: 800px;
-      margin: auto;
-      background-color: var(--element-bg);
+      padding: 10px;
       border-radius: var(--border-radius);
-      box-shadow:
-        5px 5px 15px var(--shadow-dark),
-        -5px -5px 15px var(--shadow-light);
-      color: var(--text-color-dark);
-      font-family: var(--font-body);
-    }
-    .calculator {
-      background: var(--element-bg);
-      padding: 2rem;
-      border-radius: var(--border-radius);
-      box-shadow:
-        5px 5px 15px var(--shadow-dark),
-        -5px -5px 15px var(--shadow-light);
-      width: 100%;
-      max-width: 500px;
-      margin: auto;
-      color: var(--text-color-dark);
-      font-family: var(--font-body);
-    }
-    .calculator h1 {
-      display: none;
-    }
-    .calculator h2 {
-      text-align: center;
-      color: var(--text-color);
-      margin-bottom: 1.5rem;
-      font-size: 2rem;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-      font-family: var(--font-title);
-    }
-    .input-group {
-      margin-bottom: 1.5rem;
-      position: relative;
-    }
-    label {
-      display: block;
-      margin-bottom: 0.5rem;
-      font-weight: 500;
-      color: var(--text-color-dark);
-      font-family: var(--font-body);
-    }
-    input, select {
-      width: 100%;
-      padding: 0.8rem;
-      border: none;
-      border-radius: var(--border-radius);
-      background: var(--element-bg-light);
-      color: var(--text-color-dark);
-      font-size: 1rem;
-      margin-bottom: 0.5rem;
-      box-shadow:
-        inset 5px 5px 10px var(--shadow-dark),
-        inset -5px -5px 10px var(--shadow-light);
-      transition: background 0.3s, box-shadow 0.3s;
-    }
-    input:focus, select:focus {
-      outline: none;
-      background: var(--element-bg);
-      box-shadow:
-        inset 2px 2px 5px var(--shadow-dark),
-        inset -2px -2px 5px var(--shadow-light);
-    }
-    input::placeholder {
-      color: #dce8f3;
-    }
-    button {
-      width: 100%;
-      padding: 1rem;
-      background: var(--button-bg);
-      border: none;
-      border-radius: var(--border-radius);
-      color: var(--button-text-color);
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: background 0.3s, box-shadow 0.3s;
-      margin-top: 10px;
-      box-shadow:
-        5px 5px 10px var(--shadow-dark),
-        -5px -5px 10px var(--shadow-light);
-      font-family: var(--font-body);
-    }
-    button:hover {
-      background: var(--button-bg-hover);
       box-shadow:
         inset 5px 5px 10px var(--shadow-dark),
         inset -5px -5px 10px var(--shadow-light);
     }
-    #result, .result {
-      margin-top: 1.5rem;
-      padding: 1rem;
-      background: var(--element-bg-light);
-      border-radius: var(--border-radius);
-      text-align: center;
-      font-size: 1.2rem;
-      color: var(--text-color-dark);
-      box-shadow:
-        inset 5px 5px 10px var(--shadow-dark),
-        inset -5px -5px 10px var(--shadow-light);
-      font-family: var(--font-body);
+    .conceptos-basicos ul {
+      list-style: square;
+      margin-left: 20px;
     }
-    .animation {
-      animation: fadeIn 0.5s ease-out;
-    }
-    .interest-details {
-      margin-top: 1rem;
-      padding: 1rem;
-      background: var(--element-bg-light);
-      border-radius: var(--border-radius);
-      box-shadow:
-        inset 3px 3px 6px var(--shadow-dark),
-        inset -3px -3px 6px var(--shadow-light);
-      font-family: var(--font-body);
-    }
-    .interest-period {
-      margin: 0.5rem 0;
-      padding: 0.5rem;
-      background: var(--element-bg);
-      border-radius: var(--border-radius);
-      box-shadow:
-        inset 2px 2px 4px var(--shadow-dark),
-        inset -2px -2px 4px var(--shadow-light);
-      color: var(--text-color);
-      font-family: var(--font-body);
-    }
-    /* Botón Descargar a Excel */
-    #download-excel {
-      background: #4CAF50;
-      color: white;
-      padding: 1rem;
-      border: none;
-      border-radius: var(--border-radius);
-      font-size: 1.1rem;
-      cursor: pointer;
-      transition: background 0.3s, box-shadow 0.3s;
-      margin-top: 10px;
-      width: 100%;
-      box-shadow:
-        5px 5px 10px var(--shadow-dark),
-        -5px -5px 10px var(--shadow-light);
-      font-family: var(--font-body);
-    }
-    #download-excel:hover {
-      background: #45a049;
-      box-shadow:
-        inset 5px 5px 10px var(--shadow-dark),
-        inset -5px -5px 10px var(--shadow-light);
-    }
-    /* Estilo para la leyenda debajo del widget */
     .merval-legend {
       text-align: center;
       margin-top: 10px;
@@ -430,15 +307,16 @@
       color: var(--element-bg-light);
       text-decoration: underline;
     }
-    /* Estilos para la sección Perfil del Inversor */
+
+    /************************************************************
+      PERFIL DEL INVERSOR
+    *************************************************************/
     .profiles-container {
       display: flex;
       justify-content: space-around;
       flex-wrap: wrap;
       gap: 20px;
-      max-width: 1200px;
       margin: 40px auto;
-      padding: 0 20px;
     }
     .profile-card {
       background: var(--element-bg);
@@ -464,35 +342,6 @@
         10px 10px 20px var(--shadow-dark),
         -10px -10px 20px var(--shadow-light);
     }
-    .profile-icon {
-      width: 80px;
-      height: 80px;
-      margin: 0 auto 20px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: var(--element-bg-light);
-      border-radius: 50%;
-      box-shadow:
-        5px 5px 10px var(--shadow-dark),
-        -5px -5px 10px var(--shadow-light);
-    }
-    .profile-title {
-      font-size: 24px;
-      color: var(--text-color-dark);
-      margin-bottom: 15px;
-      text-align: center;
-      font-family: var(--font-title);
-    }
-    .profile-description {
-      font-size: 16px;
-      line-height: 1.6;
-      color: var(--text-color-dark);
-      text-align: justify;
-      display: none;
-      margin-top: 15px;
-      font-family: var(--font-body);
-    }
     .risk-meter {
       height: 10px;
       background: #eee;
@@ -506,22 +355,8 @@
       transition: width 0.3s ease;
       width: 0%;
     }
-    @keyframes pulse {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.05); }
-      100% { transform: scale(1); }
-    }
-    .profile-card:hover .profile-icon {
-      animation: pulse 1s infinite;
-    }
-    .profile-card.active .profile-description {
-      display: block;
-    }
-    .profile-card.active .risk-level {
-      width: 100%;
-    }
     .highlighted-profile {
-      color: #FFD700;
+      color: var(--highlight-color);
       animation: blink 1.5s infinite;
       font-weight: bold;
     }
@@ -530,69 +365,59 @@
       50% { opacity: 0.2; }
       100% { opacity: 1; }
     }
-    /* Transición suave para mostrar/ocultar la sección */
-    #perfil-del-inversor {
-      transition: opacity 0.5s ease, max-height 0.5s ease, margin 0.5s ease, padding 0.5s ease;
-      overflow: hidden;
-    }
-    #perfil-del-inversor.hidden {
-      opacity: 0;
-      max-height: 0;
-      padding: 0 20px;
+
+    /************************************************************
+      TEST DE PERFIL (PASO A PASO)
+    *************************************************************/
+    #test-wrapper {
+      max-width: 600px;
       margin: 0 auto;
-    }
-    #perfil-del-inversor.visible {
-      opacity: 1;
-      max-height: 2000px;
-    }
-    /* Estilos para la Sección Test de Perfil */
-    #test-perfil {
-      padding: 40px 20px;
-      background-color: var(--element-bg);
+      text-align: center;
+      background: var(--element-bg);
       border-radius: var(--border-radius);
+      padding: 20px;
       box-shadow:
         5px 5px 15px var(--shadow-dark),
         -5px -5px 15px var(--shadow-light);
-      max-width: 800px;
-      margin: 40px auto;
-      color: var(--text-color-dark);
-      font-family: var(--font-body);
     }
-    #test-perfil h2 {
-      color: var(--text-color);
-      text-align: center;
+    #test-wrapper .progress-bar {
+      height: 10px;
+      background: #ccc;
+      border-radius: 5px;
+      overflow: hidden;
       margin-bottom: 20px;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
-      font-family: var(--font-title);
     }
-    #test-perfil form {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+    #test-wrapper .progress {
+      height: 100%;
+      width: 0%;
+      background: var(--element-bg-light);
+      transition: width 0.3s ease;
     }
-    #test-perfil .question {
-      display: flex;
-      flex-direction: column;
+    .test-step {
+      display: none; /* Cada paso se oculta por defecto */
+      margin-bottom: 20px;
     }
-    #test-perfil .question p {
-      margin-bottom: 10px;
+    .test-question {
       font-weight: 600;
-      color: var(--text-color-dark);
-      font-family: var(--font-body);
+      margin-bottom: 10px;
+      color: var(--text-color);
     }
-    #test-perfil .slider-container {
+    .test-step .slider-container {
       display: flex;
       align-items: center;
       gap: 10px;
+      margin: 10px auto;
+      justify-content: center;
     }
-    #test-perfil .slider-container label {
+    .test-step label {
       flex: 1;
-      text-align: left;
       color: var(--text-color-dark);
       font-family: var(--font-body);
+      text-align: right;
+      margin: 0;
     }
-    #test-perfil .slider-container input[type="range"] {
-      flex: 4;
+    .test-step input[type="range"] {
+      flex: 2;
       -webkit-appearance: none;
       width: 100%;
       height: 8px;
@@ -602,7 +427,7 @@
       opacity: 0.7;
       transition: opacity 0.2s;
     }
-    #test-perfil .slider-container input[type="range"]::-webkit-slider-thumb {
+    .test-step input[type="range"]::-webkit-slider-thumb {
       -webkit-appearance: none;
       appearance: none;
       width: 20px;
@@ -615,27 +440,25 @@
         -2px -2px 5px var(--shadow-light);
       transition: background 0.3s, box-shadow 0.3s;
     }
-    #test-perfil .slider-container input[type="range"]::-webkit-slider-thumb:hover {
-      background: var(--element-bg-dark);
-      box-shadow:
-        inset 2px 2px 5px var(--shadow-dark),
-        inset -2px -2px 5px var(--shadow-light);
-    }
-    #test-perfil .range-labels {
+    .range-labels {
+      margin-top: 5px;
       display: flex;
       justify-content: space-between;
-      font-size: 12px;
       color: var(--text-color-dark);
-      font-family: var(--font-body);
-      margin-top: 5px;
+      font-size: 0.8rem;
     }
-    #test-perfil button {
-      padding: 10px;
-      background-color: var(--button-bg);
-      color: var(--button-text-color);
+    .test-navigation {
+      display: flex;
+      justify-content: space-around;
+      gap: 20px;
+    }
+    .test-navigation button {
+      padding: 10px 20px;
       border: none;
       border-radius: var(--border-radius);
-      font-size: 1rem;
+      background-color: var(--button-bg);
+      color: var(--button-text-color);
+      font-size: 0.95rem;
       cursor: pointer;
       transition: background-color 0.3s, box-shadow 0.3s;
       box-shadow:
@@ -643,101 +466,534 @@
         -5px -5px 10px var(--shadow-light);
       font-family: var(--font-body);
     }
-    #test-perfil button:hover {
+    .test-navigation button:hover {
       background-color: var(--button-bg-hover);
       box-shadow:
         inset 5px 5px 10px var(--shadow-dark),
         inset -5px -5px 10px var(--shadow-light);
     }
-    #test-perfil #test-result {
+    #test-result-container {
+      display: none;
       margin-top: 20px;
-      padding: 15px;
       background-color: var(--element-bg-light);
+      padding: 15px;
       border-radius: var(--border-radius);
       text-align: center;
-      font-size: 1.2rem;
-      display: none;
       box-shadow:
         inset 5px 5px 10px var(--shadow-dark),
         inset -5px -5px 10px var(--shadow-light);
       color: var(--text-color-dark);
+      position: relative;
+    }
+    #test-result {
+      display: inline-block;
+      text-align: center;
+      font-size: 1.2rem;
+    }
+    #test-result-profile {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    /************************************************************
+      HERRAMIENTAS (CALCULADORA, GENERADOR PROMPT, DÓLARES)
+    *************************************************************/
+    .herramientas-accordion button {
+      width: 100%;
+      padding: 15px;
+      text-align: left;
+      font-size: 18px;
+      border: none;
+      outline: none;
+      cursor: pointer;
+      background: var(--element-bg);
+      color: var(--text-color);
+      border-radius: var(--border-radius);
+      margin-bottom: 10px;
+      transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow:
+        5px 5px 10px var(--shadow-dark),
+        -5px -5px 10px var(--shadow-light);
       font-family: var(--font-body);
     }
-    /* Estilos para la Sección Herramientas */
-    #herramientas {
-      padding: 40px 20px;
+    .herramientas-panel-content {
+      display: none;
+      padding: 15px;
       background-color: var(--element-bg);
+      border-radius: var(--border-radius);
+      box-shadow:
+        inset 5px 5px 10px var(--shadow-dark),
+        inset -5px -5px 10px var(--shadow-light);
+      color: var(--text-color-dark);
+      margin-bottom: 20px;
+    }
+    .calculator {
+      background: var(--element-bg);
+      padding: 2rem;
       border-radius: var(--border-radius);
       box-shadow:
         5px 5px 15px var(--shadow-dark),
         -5px -5px 15px var(--shadow-light);
-      max-width: 800px;
-      margin: 40px auto;
+      width: 100%;
+      max-width: 500px;
+      margin: 20px auto;
       color: var(--text-color-dark);
       font-family: var(--font-body);
     }
-    #herramientas h2 {
-      color: var(--text-color);
+    .calculator h2 {
       text-align: center;
-      margin-bottom: 20px;
+      color: var(--text-color);
+      margin-bottom: 1.5rem;
+      font-size: 2rem;
       text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
       font-family: var(--font-title);
     }
-    /* ---------------------------
-       SECCIÓN: Mercado de Capitales
-       --------------------------- */
-    <!-– En Mercado de Capitales se mantienen: Acciones, Bonos, FCI y Opciones y Futuros –->
-    <!-- Sección Mercado de Capitales -->
-    </style>
+    .input-group {
+      margin-bottom: 1.5rem;
+      position: relative;
+    }
+    .input-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--text-color-dark);
+      font-family: var(--font-body);
+    }
+    .input-group input,
+    .input-group select {
+      width: 100%;
+      padding: 0.8rem;
+      border: none;
+      border-radius: var(--border-radius);
+      background: var(--element-bg-light);
+      color: var(--text-color-dark);
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      box-shadow:
+        inset 5px 5px 10px var(--shadow-dark),
+        inset -5px -5px 10px var(--shadow-light);
+      transition: background 0.3s, box-shadow 0.3s;
+    }
+    .input-group input:focus,
+    .input-group select:focus {
+      outline: none;
+      background: var(--element-bg);
+      box-shadow:
+        inset 2px 2px 5px var(--shadow-dark),
+        inset -2px -2px 5px var(--shadow-light);
+    }
+    .calculator button {
+      width: 100%;
+      padding: 1rem;
+      background: var(--button-bg);
+      border: none;
+      border-radius: var(--border-radius);
+      color: var(--button-text-color);
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: background 0.3s, box-shadow 0.3s;
+      margin-top: 10px;
+      box-shadow:
+        5px 5px 10px var(--shadow-dark),
+        -5px -5px 10px var(--shadow-light);
+      font-family: var(--font-body);
+    }
+    .calculator button:hover {
+      background: var(--button-bg-hover);
+      box-shadow:
+        inset 5px 5px 10px var(--shadow-dark),
+        inset -5px -5px 10px var(--shadow-light);
+    }
+    #result,
+    .result {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: var(--element-bg-light);
+      border-radius: var(--border-radius);
+      text-align: center;
+      font-size: 1.2rem;
+      color: var(--text-color-dark);
+      box-shadow:
+        inset 5px 5px 10px var(--shadow-dark),
+        inset -5px -5px 10px var(--shadow-light);
+      font-family: var(--font-body);
+    }
+    .interest-details {
+      margin-top: 1rem;
+      padding: 1rem;
+      background: var(--element-bg-light);
+      border-radius: var(--border-radius);
+      box-shadow:
+        inset 3px 3px 6px var(--shadow-dark),
+        inset -3px -3px 6px var(--shadow-light);
+      font-family: var(--font-body);
+    }
+    .interest-period {
+      margin: 0.5rem 0;
+      padding: 0.5rem;
+      background: var(--element-bg);
+      border-radius: var(--border-radius);
+      box-shadow:
+        inset 2px 2px 4px var(--shadow-dark),
+        inset -2px -2px 4px var(--shadow-light);
+      color: var(--text-color);
+      font-family: var(--font-body);
+    }
+    #download-excel {
+      background: #4CAF50;
+      margin-bottom: 10px;
+    }
+    #download-excel:hover {
+      background: #45a049;
+      box-shadow:
+        inset 5px 5px 10px var(--shadow-dark),
+        inset -5px -5px 10px var(--shadow-light);
+    }
+
+    /* Generador de Prompt */
+    #generador-prompt .container {
+      max-width: 500px;
+      margin: 20px auto;
+    }
+    #generador-prompt h1 {
+      text-align: center;
+      color: var(--text-color);
+      margin-bottom: 20px;
+      font-family: var(--font-title);
+      font-size: 1.8rem;
+    }
+    #generador-prompt .form-group {
+      margin-bottom: 15px;
+    }
+    #generador-prompt label {
+      font-weight: 500;
+      color: var(--text-color-dark);
+      display: block;
+      margin-bottom: 5px;
+    }
+    #generador-prompt input {
+      width: 100%;
+      padding: 0.8rem;
+      border: none;
+      border-radius: var(--border-radius);
+      background: var(--element-bg-light);
+      color: var(--text-color-dark);
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      box-shadow:
+        inset 5px 5px 10px var(--shadow-dark),
+        inset -5px -5px 10px var(--shadow-light);
+    }
+    #generador-prompt .button-container {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 10px;
+    }
+    #generador-prompt .button {
+      flex: 1;
+      padding: 0.8rem;
+      background: var(--button-bg);
+      border: none;
+      border-radius: var(--border-radius);
+      color: var(--button-text-color);
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s, box-shadow 0.3s;
+      box-shadow:
+        5px 5px 10px var(--shadow-dark),
+        -5px -5px 10px var(--shadow-light);
+    }
+    #generador-prompt .button:hover {
+      background: var(--button-bg-hover);
+      box-shadow:
+        inset 5px 5px 10px var(--shadow-dark),
+        inset -5px -5px 10px var(--shadow-light);
+    }
+    #generador-prompt .chatgpt-button {
+      width: 100%;
+      margin-top: 10px;
+      padding: 1rem;
+      border: none;
+      background: #333;
+      color: #fff;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 1.1rem;
+      box-shadow:
+        5px 5px 10px var(--shadow-dark),
+        -5px -5px 10px var(--shadow-light);
+    }
+    #generador-prompt .chatgpt-button:hover {
+      background: #444;
+    }
+
+    /* Cotizaciones Dólares */
+    /* Se utiliza grid para formar 3 filas:
+       - Las 2 primeras filas con 3 columnas cada una.
+       - La última fila tendrá la tarjeta centrada */
+    #cotizaciones-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+    .dolar-card {
+      background: var(--element-bg-dark);
+      color: var(--text-color);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      box-shadow:
+        5px 5px 10px var(--shadow-dark),
+        -5px -5px 10px var(--shadow-light);
+      text-align: center;
+      position: relative;
+      cursor: pointer;
+      overflow: hidden;
+    }
+    .dolar-card h4 {
+      margin: 0 0 10px;
+      border: 2px solid var(--text-color-dark);
+      padding: 5px 10px;
+      border-radius: var(--border-radius);
+      display: inline-block;
+      position: relative;
+      z-index: 1;
+    }
+    /* Tooltip para descripción de cotización */
+    .dolar-card .tooltip {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      color: var(--text-color);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      padding: 20px;
+      box-sizing: border-box;
+      border-radius: var(--border-radius);
+      z-index: 10;
+      text-align: center;
+      justify-content: center;
+      align-items: center;
+    }
+    .dolar-card:hover .tooltip {
+      display: flex;
+    }
+
+    /************************************************************
+      CRIPTOMONEDAS
+    *************************************************************/
+    .btc-container {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .btc-container h1 {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+      color: var(--text-color);
+    }
+    .btc-container .price {
+      font-size: 2rem;
+      margin-bottom: 10px;
+      font-weight: bold;
+    }
+    .chart-container {
+      width: 100%;
+      height: 300px;
+      margin: 20px auto;
+    }
+    .update-btn {
+      margin-top: 10px;
+      padding: 8px 16px;
+      border-radius: var(--border-radius);
+      background: var(--button-bg);
+      color: var(--button-text-color);
+      border: none;
+      cursor: pointer;
+      transition: background 0.3s, box-shadow 0.3s;
+      box-shadow:
+        5px 5px 10px var(--shadow-dark),
+        -5px -5px 10px var(--shadow-light);
+    }
+    .update-btn:hover {
+      background: var(--button-bg-hover);
+      box-shadow:
+        inset 5px 5px 10px var(--shadow-dark),
+        inset -5px -5px 10px var(--shadow-light);
+    }
+    .change-24h.positive { color: var(--positive-color); }
+    .change-24h.negative { color: var(--danger-color); }
+
+    /************************************************************
+      FOOTER
+    *************************************************************/
+    footer {
+      background-color: var(--element-bg);
+      color: var(--text-color-secondary);
+      text-align: center;
+      padding: 10px;
+      font-size: 14px;
+      box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+      font-family: var(--font-body);
+      z-index: 1000;
+    }
+    footer .aviso {
+      font-size: 12px;
+      margin-top: 5px;
+      color: #999;
+    }
+
+    /************************************************************
+      RESPONSIVIDAD
+    *************************************************************/
+    @media (max-width: 1024px) {
+      #dashboard {
+        grid-template-columns: repeat(3, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+      }
+      #empty-slot {
+        display: none;
+      }
+    }
+    @media (max-width: 768px) {
+      #dashboard {
+        grid-template-columns: repeat(2, 1fr);
+        grid-template-rows: repeat(4, 1fr);
+      }
+      #empty-slot {
+        display: none;
+      }
+    }
+    @media (max-width: 480px) {
+      .section-content {
+        padding: 10px;
+        font-size: 0.9rem;
+      }
+    }
+
+  </style>
 </head>
 <body>
-  <!-- Botón "Contraer Todo" -->
-  <div id="collapse-all">Contraer Todo</div>
 
-  <!-- Header -->
+  <!-- CABECERA -->
   <header>
-    <!-- Logo eliminado para maximizar espacio -->
-    <div class="menu-toggle">&#9776;</div>
-    <nav>
-      <ul>
-        <li><a href="#introduccion">Introducción</a></li>
-        <li><a href="#mercado-de-capitales">Mercado de Capitales</a></li>
-        <li><a href="#instrumentos-bancarios">Instrumentos Bancarios</a></li>
-        <li><a href="#instrumentos-alternativos">Instrumentos Alternativos</a></li>
-        <li><a href="#perfil-del-inversor">Perfil del Inversor</a></li>
-        <li><a href="#test-perfil">Test de Perfil</a></li>
-        <li><a href="#herramientas">Herramientas</a></li>
-      </ul>
-    </nav>
+    <h1>Guía de Inversiones en Argentina</h1>
+    <p>Creado por Pablo Bascoy</p>
   </header>
 
-  <!-- Sección de Introducción -->
-  <section id="introduccion">
-    <h2>Bienvenido a la Guía de Inversiones en Argentina</h2>
-    <p>Creado por Pablo Bascoy</p>
-    <!-- Valor actual del Índice Merval -->
-    <div id="merval-valor" style="text-align: center; margin-bottom: 20px;">
-      <!-- TradingView Widget BEGIN -->
-      <div class="tradingview-widget-container">
-        <div class="tradingview-widget-container__widget"></div>
-        <script type="text/javascript"
-          src="https://s3.tradingview.com/external-embedding/embed-widget-single-quote.js">
-          {
-            "symbol": "BCBA:IMV",
-            "width": "100%",
-            "colorTheme": "light",
-            "isTransparent": false,
-            "locale": "es"
-          }
-        </script>
-      </div>
-      <!-- TradingView Widget END -->
-      <!-- Leyenda con enlace -->
-      <p class="merval-legend"><a href="https://www.tradingview.com/chart/?symbol=BCBA%3AIMV" target="_blank">Vea el recorrido del Merval online</a></p>
+  <!-- DASHBOARD PRINCIPAL -->
+  <div id="dashboard">
+    <!-- 1. Introducción -->
+    <div class="dashboard-card" data-target="introduccion">
+      <svg class="card-icon" viewBox="0 0 24 24">
+        <path d="M2 3h6a3 3 0 0 1 3 3v14a3 3 0 0 0-3-3H2Z"></path>
+        <path d="M22 3h-6a3 3 0 0 0-3 3v14a3 3 0 0 1 3-3h6Z"></path>
+      </svg>
+      <h2>Introducción</h2>
     </div>
-    <p>Invertir es una excelente manera de proteger y hacer crecer tu dinero.
+
+    <!-- 2. Mercado de Capitales -->
+    <div class="dashboard-card" data-target="mercado-de-capitales">
+      <svg class="card-icon" viewBox="0 0 24 24">
+        <polyline points="13 17 18 12 13 7"></polyline>
+        <polyline points="6 17 11 12 6 7"></polyline>
+      </svg>
+      <h2>Mercado de Capitales</h2>
+    </div>
+
+    <!-- 3. Instrumentos Bancarios -->
+    <div class="dashboard-card" data-target="instrumentos-bancarios">
+      <svg class="card-icon" viewBox="0 0 24 24">
+        <path d="M3 10h18"></path>
+        <path d="m5 6 7-3 7 3"></path>
+        <path d="M4 10v11"></path>
+        <path d="M20 10v11"></path>
+        <path d="M8 10v11"></path>
+        <path d="M16 10v11"></path>
+        <path d="M3 21h18"></path>
+      </svg>
+      <h2>Instrumentos Bancarios</h2>
+    </div>
+
+    <!-- 4. Instrumentos Alternativos -->
+    <div class="dashboard-card" data-target="instrumentos-alternativos">
+      <svg class="card-icon" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10"></circle>
+        <path d="M2 12h20"></path>
+        <path d="M12 2a15.3 15.3 0 0 1 0 20"></path>
+        <path d="M12 2a15.3 15.3 0 0 0 0 20"></path>
+      </svg>
+      <h2>Instrumentos Alternativos</h2>
+    </div>
+
+    <!-- 5. Perfil del Inversor -->
+    <div class="dashboard-card" data-target="perfil-del-inversor">
+      <svg class="card-icon" viewBox="0 0 24 24">
+        <path d="M8 15s-3 0-4 1 0 4 0 4h12s0-3 0-4-4-1-4-1"></path>
+        <circle cx="8" cy="7" r="4"></circle>
+        <polyline points="17 11 19 13 23 9"></polyline>
+      </svg>
+      <h2>Perfil del Inversor</h2>
+    </div>
+
+    <!-- 6. Test de Perfil -->
+    <div class="dashboard-card" data-target="test-perfil">
+      <svg class="card-icon" viewBox="0 0 24 24">
+        <path d="M9 4h6"></path>
+        <path d="M9 2h6a2 2 0 0 1 2 2v2a0 0 0 0 1 0 0H7a0 0 0 0 1 0 0V4a2 2 0 0 1 2-2z"></path>
+        <path d="M19 10v10a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V10"></path>
+        <path d="M10 14h4"></path>
+        <path d="M10 18h4"></path>
+      </svg>
+      <h2>Test de Perfil</h2>
+    </div>
+
+    <!-- 7. Herramientas -->
+    <div class="dashboard-card" data-target="herramientas">
+      <svg class="card-icon" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="2"></circle>
+        <path d="M12 2v2"></path>
+        <path d="M12 20v2"></path>
+        <path d="m4.93 4.93 1.41 1.41"></path>
+        <path d="m17.66 17.66 1.41 1.41"></path>
+        <path d="M2 12h2"></path>
+        <path d="M20 12h2"></path>
+        <path d="m6.34 17.66-1.41 1.41"></path>
+        <path d="m19.07 4.93-1.41 1.41"></path>
+      </svg>
+      <h2>Herramientas</h2>
+    </div>
+
+    <!-- Slot vacío para cuadrar filas en desktop -->
+    <div id="empty-slot"></div>
+  </div>
+
+  <!-- SECCIONES DE CONTENIDO -->
+
+  <!-- INTRODUCCIÓN -->
+  <div class="section-content" id="introduccion">
+    <div class="section-navigation">
+      <button onclick="goDashboard()">Volver al Dashboard</button>
+      <button onclick="goNextSection('mercado-de-capitales')">Siguiente</button>
+    </div>
+    <h2>Bienvenido a la Guía de Inversiones en Argentina</h2>
+    <p>
+      Invertir es una excelente manera de proteger y hacer crecer tu dinero.
       Si eres nuevo en el mundo de las inversiones, esta guía te ayudará a entender
-      las opciones disponibles en Argentina de forma sencilla.</p>
+      las opciones disponibles en Argentina de forma sencilla.
+    </p>
+    <p class="merval-legend">
+      <a href="https://www.tradingview.com/chart/?symbol=BCBA%3AIMV" target="_blank">
+        Ver el recorrido del Merval online
+      </a>
+    </p>
     <div class="conceptos-basicos">
       <h3>Conceptos Básicos</h3>
       <ul>
@@ -747,17 +1003,21 @@
         <li><strong>Liquidez:</strong> Facilidad para convertir tu inversión en efectivo.</li>
       </ul>
     </div>
-  </section>
+  </div>
 
-  <!-- Sección Mercado de Capitales (sin Criptomonedas) -->
-  <section id="mercado-de-capitales">
+  <!-- MERCADO DE CAPITALES -->
+  <div class="section-content" id="mercado-de-capitales">
+    <div class="section-navigation">
+      <button onclick="goDashboard()">Volver al Dashboard</button>
+      <button onclick="goNextSection('instrumentos-bancarios')">Siguiente</button>
+    </div>
     <h2>Mercado de Capitales</h2>
+
     <!-- Acciones -->
     <div class="accordion">
       <button>Acciones</button>
       <div class="panel-content">
         <p>Compra de participaciones de empresas cotizadas en la Bolsa de Comercio de Buenos Aires. Inversión con alto potencial de retorno pero también mayor riesgo.</p>
-        <!-- Panel Merval -->
         <h4>Panel Merval (o Panel Líderes)</h4>
         <ul>
           <li><strong>Definición:</strong> Este panel incluye las acciones más representativas del mercado argentino, seleccionadas según su capitalización bursátil y el volumen de operaciones.</li>
@@ -775,7 +1035,6 @@
             </ul>
           </li>
         </ul>
-        <!-- Panel General -->
         <h4>Panel General</h4>
         <ul>
           <li><strong>Definición:</strong> Agrupa las empresas que no cumplen con los requisitos para estar en el Panel Merval.</li>
@@ -799,7 +1058,6 @@
       <button>Bonos</button>
       <div class="panel-content">
         <p>Títulos de deuda emitidos por el Gobierno o empresas. Existen en pesos y dólares, y son opciones más conservadoras.</p>
-        <!-- Bonos Soberanos -->
         <h4>Bonos Soberanos</h4>
         <ul>
           <li><strong>Definición:</strong> Títulos de deuda con respaldo estatal.</li>
@@ -813,12 +1071,11 @@
       </div>
     </div>
 
-    <!-- Fondos Comunes de Inversión (FCI) -->
+    <!-- FCI -->
     <div class="accordion">
       <button>Fondos Comunes de Inversión (FCI)</button>
       <div class="panel-content">
         <p>Vehículos de inversión que agrupan capital de varios inversores para invertir en activos diversos, administrados por expertos.</p>
-        <!-- Fondos de Liquidez (Money Market) -->
         <h4>Fondos de Liquidez (Money Market)</h4>
         <ul>
           <li><strong>Objetivo:</strong> Mantener liquidez y minimizar el riesgo.</li>
@@ -833,23 +1090,19 @@
       <div class="panel-content">
         <p>Instrumentos financieros derivados que permiten especular o cubrir riesgos.</p>
         <ul>
-          <li><strong>Futuros:</strong>
-            <ul>
-              <li>Acuerdos para comprar o vender un activo en el futuro a un precio acordado.</li>
-            </ul>
-          </li>
-          <li><strong>Opciones:</strong>
-            <ul>
-              <li>Derecho de comprar o vender un activo a un precio predeterminado.</li>
-            </ul>
-          </li>
+          <li><strong>Futuros:</strong> Acuerdos para comprar o vender un activo en el futuro a un precio acordado.</li>
+          <li><strong>Opciones:</strong> Derecho de comprar o vender un activo a un precio predeterminado.</li>
         </ul>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- Sección Instrumentos Bancarios -->
-  <section id="instrumentos-bancarios">
+  <!-- INSTRUMENTOS BANCARIOS -->
+  <div class="section-content" id="instrumentos-bancarios">
+    <div class="section-navigation">
+      <button onclick="goDashboard()">Volver al Dashboard</button>
+      <button onclick="goNextSection('instrumentos-alternativos')">Siguiente</button>
+    </div>
     <h2>Instrumentos Bancarios</h2>
     <!-- Plazo Fijo -->
     <div class="accordion">
@@ -865,10 +1118,14 @@
         <p>Similar al plazo fijo, pero con ajuste por inflación (índice CER) y mayor liquidez.</p>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- Sección Instrumentos Alternativos -->
-  <section id="instrumentos-alternativos">
+  <!-- INSTRUMENTOS ALTERNATIVOS -->
+  <div class="section-content" id="instrumentos-alternativos">
+    <div class="section-navigation">
+      <button onclick="goDashboard()">Volver al Dashboard</button>
+      <button onclick="goNextSection('perfil-del-inversor')">Siguiente</button>
+    </div>
     <h2>Instrumentos Alternativos</h2>
     <!-- CEDEARs -->
     <div class="accordion">
@@ -921,13 +1178,12 @@
         </ul>
       </div>
     </div>
-    <!-- Criptomonedas (movido desde Mercado de Capitales) -->
+    <!-- Criptomonedas -->
     <div class="accordion">
       <button>Criptomonedas</button>
       <div class="panel-content">
-        <p>Monedas digitales descentralizadas que usan tecnología blockchain para transacciones seguras y transparentes. Su valor depende de la oferta, la demanda y la confianza del mercado.</p>
+        <p>Monedas digitales descentralizadas que usan tecnología blockchain. Su valor depende de la oferta, la demanda y la confianza del mercado.</p>
         <p>Se comercializan a través de exchanges como Binance, Buenbit y SatoshiTango.</p>
-        <!-- Seguimiento BTC/USD -->
         <div class="btc-container">
           <h1>Precio BTC/USD</h1>
           <div id="price" class="price">Cargando...</div>
@@ -942,13 +1198,17 @@
         </div>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- Sección Perfil del Inversor -->
-  <section id="perfil-del-inversor" class="visible">
+  <!-- PERFIL DEL INVERSOR -->
+  <div class="section-content" id="perfil-del-inversor">
+    <div class="section-navigation">
+      <button onclick="goDashboard()">Volver al Dashboard</button>
+      <button onclick="goNextSection('test-perfil')">Siguiente</button>
+    </div>
     <h2>Perfil del Inversor</h2>
     <div class="profiles-container">
-      <!-- Perfil Conservador -->
+      <!-- Conservador -->
       <div class="profile-card">
         <div class="profile-icon">
           <svg viewBox="0 0 24 24" width="60" height="60">
@@ -963,7 +1223,7 @@
           El inversor conservador prioriza la seguridad y la preservación del capital. Prefiere inversiones de bajo riesgo como bonos gubernamentales y depósitos a plazo fijo.
         </p>
       </div>
-      <!-- Perfil Moderado -->
+      <!-- Moderado -->
       <div class="profile-card">
         <div class="profile-icon">
           <svg viewBox="0 0 24 24" width="60" height="60">
@@ -979,7 +1239,7 @@
           El inversor moderado busca un equilibrio entre seguridad y rendimiento, aceptando ciertos riesgos para lograr mejores retornos.
         </p>
       </div>
-      <!-- Perfil Arriesgado -->
+      <!-- Arriesgado -->
       <div class="profile-card">
         <div class="profile-icon">
           <svg viewBox="0 0 24 24" width="60" height="60">
@@ -995,90 +1255,110 @@
         </p>
       </div>
     </div>
-  </section>
+  </div>
 
-  <!-- Sección Test de Perfil -->
-  <section id="test-perfil">
+  <!-- TEST DE PERFIL (PASO A PASO) -->
+  <div class="section-content" id="test-perfil">
+    <div class="section-navigation">
+      <button onclick="goDashboard()">Volver al Dashboard</button>
+      <button onclick="goNextSection('herramientas')">Siguiente</button>
+    </div>
     <h2>Test de Perfil</h2>
-    <form id="perfil-test">
-      <!-- Pregunta 1 -->
-      <div class="question">
-        <p>1. ¿Cuál es tu objetivo principal al invertir?</p>
-        <div class="slider-container">
-          <label for="q1">Preservar mi capital y obtener rendimientos estables.</label>
-          <input type="range" id="q1" name="q1" min="1" max="3" step="1" value="1" required>
-        </div>
-        <div class="range-labels">
-          <span>Mínimo</span>
-          <span>Máximo</span>
-        </div>
+    <div id="test-wrapper">
+      <div class="progress-bar">
+        <div class="progress" id="test-progress"></div>
       </div>
-      <!-- Pregunta 2 -->
-      <div class="question">
-        <p>2. ¿Cómo reaccionas ante la posibilidad de perder parte de tu inversión?</p>
-        <div class="slider-container">
-          <label for="q2">Me preocuparía mucho y preferiría inversiones seguras.</label>
-          <input type="range" id="q2" name="q2" min="1" max="3" step="1" value="1" required>
-        </div>
-        <div class="range-labels">
-          <span>Mínimo</span>
-          <span>Máximo</span>
-        </div>
-      </div>
-      <!-- Pregunta 3 -->
-      <div class="question">
-        <p>3. ¿Cuál es tu horizonte de inversión?</p>
-        <div class="slider-container">
-          <label for="q3">Corto plazo (menos de 3 años).</label>
-          <input type="range" id="q3" name="q3" min="1" max="3" step="1" value="1" required>
-        </div>
-        <div class="range-labels">
-          <span>Mínimo</span>
-          <span>Máximo</span>
-        </div>
-      </div>
-      <!-- Pregunta 4 -->
-      <div class="question">
-        <p>4. ¿Cuál es tu nivel de experiencia en inversiones?</p>
-        <div class="slider-container">
-          <label for="q4">Principiante, poco conocimiento.</label>
-          <input type="range" id="q4" name="q4" min="1" max="3" step="1" value="1" required>
-        </div>
-        <div class="range-labels">
-          <span>Mínimo</span>
-          <span>Máximo</span>
-        </div>
-      </div>
-      <!-- Pregunta 5 -->
-      <div class="question">
-        <p>5. ¿Cuál es tu reacción ante una baja significativa en el mercado?</p>
-        <div class="slider-container">
-          <label for="q5">Vendería mis inversiones para evitar mayores pérdidas.</label>
-          <input type="range" id="q5" name="q5" min="1" max="3" step="1" value="1" required>
-        </div>
-        <div class="range-labels">
-          <span>Mínimo</span>
-          <span>Máximo</span>
-        </div>
-      </div>
-      <!-- Botón de Envío -->
-      <button type="submit">Ver Mi Perfil</button>
-    </form>
-    <!-- Resultado del Test -->
-    <div id="test-result"></div>
-  </section>
 
-  <!-- Sección Herramientas -->
-  <section id="herramientas">
+      <!-- Pasos del test (uno por pregunta) -->
+      <div class="test-step" id="step-1">
+        <div class="test-question">1. ¿Cuál es tu objetivo principal al invertir?</div>
+        <div class="slider-container">
+          <label for="q1">Preservar capital</label>
+          <input type="range" id="q1" min="1" max="3" step="1" value="1">
+        </div>
+        <div class="range-labels">
+          <span>Mínimo</span><span>Máximo</span>
+        </div>
+      </div>
+
+      <div class="test-step" id="step-2">
+        <div class="test-question">2. ¿Cómo reaccionas ante la posibilidad de perder parte de tu inversión?</div>
+        <div class="slider-container">
+          <label for="q2">Prefiero inversiones muy seguras</label>
+          <input type="range" id="q2" min="1" max="3" step="1" value="1">
+        </div>
+        <div class="range-labels">
+          <span>Mínimo</span><span>Máximo</span>
+        </div>
+      </div>
+
+      <div class="test-step" id="step-3">
+        <div class="test-question">3. ¿Cuál es tu horizonte de inversión?</div>
+        <div class="slider-container">
+          <label for="q3">Corto plazo (menos de 3 años)</label>
+          <input type="range" id="q3" min="1" max="3" step="1" value="1">
+        </div>
+        <div class="range-labels">
+          <span>Mínimo</span><span>Máximo</span>
+        </div>
+      </div>
+
+      <div class="test-step" id="step-4">
+        <div class="test-question">4. ¿Cuál es tu nivel de experiencia en inversiones?</div>
+        <div class="slider-container">
+          <label for="q4">Principiante, poco conocimiento</label>
+          <input type="range" id="q4" min="1" max="3" step="1" value="1">
+        </div>
+        <div class="range-labels">
+          <span>Mínimo</span><span>Máximo</span>
+        </div>
+      </div>
+
+      <div class="test-step" id="step-5">
+        <div class="test-question">5. ¿Qué harías ante una baja significativa en el mercado?</div>
+        <div class="slider-container">
+          <label for="q5">Vendería todo para evitar pérdidas</label>
+          <input type="range" id="q5" min="1" max="3" step="1" value="1">
+        </div>
+        <div class="range-labels">
+          <span>Mínimo</span><span>Máximo</span>
+        </div>
+      </div>
+
+      <!-- Navegación del test -->
+      <div class="test-navigation">
+        <button id="btn-prev">Anterior</button>
+        <button id="btn-next">Siguiente</button>
+      </div>
+
+      <!-- Resultado final -->
+      <div id="test-result-container">
+        <h3>Tu Perfil de Inversor es: 
+          <span id="test-result" class="highlighted-profile"></span>
+        </h3>
+        <!-- Aquí mostraremos la tarjeta del perfil -->
+        <div id="test-result-profile"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HERRAMIENTAS -->
+  <div class="section-content" id="herramientas">
+    <div class="section-navigation">
+      <button onclick="goDashboard()">Volver al Dashboard</button>
+      <button onclick="goNextSection('introduccion')">Siguiente</button>
+    </div>
     <h2>Herramientas</h2>
     <div class="herramientas-accordion">
+      
       <!-- Calculadora de Inversiones -->
       <button>Calculadora de Inversiones</button>
       <div class="herramientas-panel-content">
         <div class="calculator animation">
+          <h2>Calculadora de Inversiones</h2>
           <div class="input-group">
             <label for="amount">Monto a Invertir:</label>
-            <input type="number" id="amount" min="0" step="0.01" required>
+            <input type="number" id="amount" min="0" step="0.01" placeholder="Ej: 1000">
           </div>
           <div class="input-group">
             <label for="currency">Moneda:</label>
@@ -1097,7 +1377,7 @@
               <option value="compound">Interés Compuesto</option>
             </select>
           </div>
-          <div class="input-group" id="capitalizationGroup">
+          <div class="input-group">
             <label for="capitalization">Frecuencia de Capitalización:</label>
             <select id="capitalization">
               <option value="1">Mensual</option>
@@ -1110,11 +1390,11 @@
           </div>
           <div class="input-group">
             <label for="rate">Tasa de Interés Anual (%):</label>
-            <input type="number" id="rate" min="0" max="100" step="0.01" required>
+            <input type="number" id="rate" min="0" max="100" step="0.01" placeholder="Ej: 35">
           </div>
           <div class="input-group">
             <label for="time">Tiempo (años):</label>
-            <input type="number" id="time" min="0" step="0.1" required>
+            <input type="number" id="time" min="0" step="0.1" placeholder="Ej: 2">
           </div>
           <button onclick="calculateInvestment()">Calcular</button>
           <button id="download-excel" onclick="downloadExcel()" disabled>Descargar a Excel</button>
@@ -1137,15 +1417,15 @@
           </div>
           <div class="form-group">
             <label>Período (días):</label>
-            <input type="number" id="dias" placeholder="Ej: 30, 90, 360">
+            <input type="number" id="dias" placeholder="Ej: 30">
           </div>
           <div class="form-group">
             <label>Moneda:</label>
-            <input type="text" id="moneda" placeholder="Ej: USD, EUR, ARS">
+            <input type="text" id="moneda" placeholder="Ej: USD">
           </div>
           <div class="form-group">
             <label>Mercado:</label>
-            <input type="text" id="mercado" placeholder="Ej: NYSE, NASDAQ">
+            <input type="text" id="mercado" placeholder="Ej: NYSE">
           </div>
           <div class="button-container">
             <button class="button" onclick="generarPrompt()">Generar Prompt</button>
@@ -1155,97 +1435,206 @@
           <button class="chatgpt-button" onclick="window.open('https://chat.openai.com/', '_blank')">Ir a ChatGPT</button>
         </div>
       </div>
+
+      <!-- Cotizaciones de Tipos de Dólares -->
+      <button>Cotizaciones de Tipos de Dólares</button>
+      <div class="herramientas-panel-content" id="cotizaciones-panel">
+        <div class="dolar-container">
+          <!-- Fecha/hora de actualización -->
+          <div class="dolar-update-time" id="update-time"></div>
+          <div id="cotizaciones-container"></div>
+        </div>
+      </div>
     </div>
-  </section>
+  </div>
 
-  <!-- Botón Volver Arriba -->
-  <a href="#introduccion" id="back-to-top">&#8679;</a>
-
-  <!-- Footer -->
+  <!-- FOOTER -->
   <footer>
-    <p>© 2024 Guía de Inversiones en Argentina</p>
+    <p>© 2025 Guía de Inversiones en Argentina</p>
     <p class="aviso">La información proporcionada es solo para fines educativos y no constituye asesoramiento financiero. Consulta con un profesional antes de invertir.</p>
   </footer>
 
-  <!-- Scripts -->
+  <!-- SCRIPTS -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
   <script>
+    /************************************************************
+      MOSTRAR/OCULTAR SECCIONES
+    *************************************************************/
+    const cards = document.querySelectorAll('.dashboard-card');
+    const sections = document.querySelectorAll('.section-content');
+
+    function showSection(sectionId) {
+      document.getElementById('dashboard').style.display = 'none';
+      sections.forEach(sec => {
+        sec.style.display = (sec.id === sectionId) ? 'block' : 'none';
+      });
+    }
+    function goDashboard() {
+      sections.forEach(sec => sec.style.display = 'none');
+      document.getElementById('dashboard').style.display = 'grid';
+    }
+    function goNextSection(nextId) {
+      showSection(nextId);
+    }
+
+    cards.forEach(card => {
+      card.addEventListener('click', () => {
+        const target = card.getAttribute('data-target');
+        showSection(target);
+      });
+    });
+
+    /************************************************************
+      ACORDEONES
+    *************************************************************/
+    let dolarInterval; /* Para limpiar el intervalo si se cierra el acordeón */
     $(document).ready(function() {
-      $('.menu-toggle').click(function() {
-        $('nav ul').slideToggle();
-      });
-      $('a[href^="#"]').on('click', function(e) {
-        e.preventDefault();
-        var target = this.hash;
-        if (target) {
-          $('html, body').animate({ scrollTop: $(target).offset().top - 100 }, 600, function(){
-            window.location.hash = target;
-          });
-        }
-        if ($(window).width() < 769) {
-          $('nav ul').slideUp();
-        }
-      });
-      $(window).scroll(function() {
-        if ($(this).scrollTop() > 300) {
-          $('#back-to-top').fadeIn();
-        } else {
-          $('#back-to-top').fadeOut();
-        }
-      });
-      $('#back-to-top').click(function(e) {
-        e.preventDefault();
-        $('html, body').animate({ scrollTop: 0 }, 600);
-      });
       $('.accordion button').click(function() {
         $(this).toggleClass('active');
         $(this).next('.panel-content').slideToggle(300);
       });
-      $('.profile-card').click(function() {
-        if ($(this).hasClass('active')) {
-          $(this).removeClass('active');
-        } else {
-          $('.profile-card').removeClass('active');
-          $(this).addClass('active');
-        }
-      });
-      $('#collapse-all').click(function() {
-        if ($('#perfil-del-inversor').hasClass('visible')) {
-          $('.profile-card.active').removeClass('active');
-          $('#perfil-del-inversor').removeClass('visible').addClass('hidden');
-          $(this).text('Expandir Todo');
-          $('html, body').animate({ scrollTop: 0 }, 600);
-        } else {
-          $('#perfil-del-inversor').removeClass('hidden').addClass('visible');
-          $(this).text('Contraer Todo');
-        }
-      });
-      $('#perfil-test').submit(function(e) {
-        e.preventDefault();
-        var score = 0;
-        for (var i = 1; i <= 5; i++) {
-          var value = parseInt($('#q' + i).val());
-          score += value;
-        }
-        var perfil = '';
-        if (score <= 7) {
-          perfil = 'Conservador';
-        } else if (score > 7 && score <= 12) {
-          perfil = 'Moderado';
-        } else {
-          perfil = 'Arriesgado';
-        }
-        $('#test-result').html('<h3>Tu Perfil de Inversor es: <span class="highlighted-profile">' + perfil + '</span></h3>');
-        $('#test-result').fadeIn();
-      });
-      $('#test-perfil .slider-container input[type="range"]').on('input change', function() { });
+
       $('.herramientas-accordion button').click(function() {
         $(this).toggleClass('active');
-        $(this).next('.herramientas-panel-content').slideToggle(300);
+        const content = $(this).next('.herramientas-panel-content');
+        content.slideToggle(300);
+
+        // Si es el acordeón de "Cotizaciones de Tipos de Dólares"
+        if ($(this).text().includes('Cotizaciones de Tipos de Dólares')) {
+          if ($(this).hasClass('active')) {
+            // Se acaba de abrir => Traer cotizaciones y setInterval
+            fetchDolares();
+            dolarInterval = setInterval(fetchDolares, 60000); // 1 min
+          } else {
+            // Se acaba de cerrar => detener interval
+            clearInterval(dolarInterval);
+          }
+        }
       });
     });
 
+    /************************************************************
+      TEST DE PERFIL PASO A PASO
+    *************************************************************/
+    const steps = document.querySelectorAll('.test-step');
+    const btnPrev = document.getElementById('btn-prev');
+    const btnNext = document.getElementById('btn-next');
+    const progressBar = document.getElementById('test-progress');
+    const resultContainer = document.getElementById('test-result-container');
+    const resultSpan = document.getElementById('test-result');
+    const resultProfile = document.getElementById('test-result-profile');
+    let currentStep = 1;
+    const totalSteps = steps.length;
+
+    // Tarjetas HTML de cada perfil
+    const perfilConservadorHTML = `
+      <div class="profile-card">
+        <div class="profile-icon">
+          <svg viewBox="0 0 24 24" width="60" height="60">
+            <path fill="#4CAF50" d="M12 2L1 21h22L12 2zm0 3.99L19.53 19H4.47L12 5.99zm-1 9h2v2h-2v-2zm0-6h2v4h-2V9z"/>
+          </svg>
+        </div>
+        <h2 class="profile-title">Inversor Conservador</h2>
+        <div class="risk-meter">
+          <div class="risk-level" style="width: 30%; background: #4CAF50;"></div>
+        </div>
+        <p class="profile-description">
+          El inversor conservador prioriza la seguridad y la preservación del capital. Prefiere inversiones de bajo riesgo como bonos gubernamentales y depósitos a plazo fijo.
+        </p>
+      </div>
+    `;
+
+    const perfilModeradoHTML = `
+      <div class="profile-card">
+        <div class="profile-icon">
+          <svg viewBox="0 0 24 24" width="60" height="60">
+            <path fill="#FF9800" d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V5h14v14z"/>
+            <path fill="#FF9800" d="M7 12h2v5H7zm4-3h2v8h-2zm4-3h2v11h-2z"/>
+          </svg>
+        </div>
+        <h2 class="profile-title">Inversor Moderado</h2>
+        <div class="risk-meter">
+          <div class="risk-level" style="width: 60%; background: #FF9800;"></div>
+        </div>
+        <p class="profile-description">
+          El inversor moderado busca un equilibrio entre seguridad y rendimiento, aceptando ciertos riesgos para lograr mejores retornos.
+        </p>
+      </div>
+    `;
+
+    const perfilArriesgadoHTML = `
+      <div class="profile-card">
+        <div class="profile-icon">
+          <svg viewBox="0 0 24 24" width="60" height="60">
+            <path fill="#F44336" d="M13 2.05v3.03c3.39.49 6 3.39 6 6.92 0 .9-.18 1.75-.48 2.54l2.6 1.53c.56-1.24.88-2.62.88-4.07 0-5.18-3.95-9.45-9-9.95zM12 19c-3.87 0-7-3.13-7-7 0-3.53 2.61-6.43 6-6.92V2.05c-5.06.5-9 4.76-9 9.95 0 5.52 4.47 10 9.99 10 3.31 0 6.24-1.61 8.06-4.09l-2.6-1.53C16.17 17.98 14.21 19 12 19z"/>
+          </svg>
+        </div>
+        <h2 class="profile-title">Inversor Arriesgado</h2>
+        <div class="risk-meter">
+          <div class="risk-level" style="width: 90%; background: #F44336;"></div>
+        </div>
+        <p class="profile-description">
+          El inversor arriesgado busca maximizar sus rendimientos y está dispuesto a asumir riesgos significativos, tolerando alta volatilidad.
+        </p>
+      </div>
+    `;
+
+    function showStep(step) {
+      steps.forEach((s, i) => {
+        s.style.display = (i === step - 1) ? 'block' : 'none';
+      });
+      const progressPercent = ((step - 1) / totalSteps) * 100;
+      progressBar.style.width = progressPercent + '%';
+      btnPrev.disabled = (step === 1);
+      if (step > totalSteps) {
+        calculateTestResult();
+      }
+    }
+
+    showStep(currentStep);
+
+    if (btnNext && btnPrev) {
+      btnNext.addEventListener('click', () => {
+        currentStep++;
+        showStep(currentStep);
+      });
+      btnPrev.addEventListener('click', () => {
+        currentStep--;
+        showStep(currentStep);
+      });
+    }
+
+    function calculateTestResult() {
+      let score = 0;
+      for (let i = 1; i <= totalSteps; i++) {
+        const val = parseInt(document.getElementById('q' + i).value);
+        score += val;
+      }
+      let perfil = '';
+      let perfilHTML = '';
+      if (score <= 7) {
+        perfil = 'Conservador';
+        perfilHTML = perfilConservadorHTML;
+      } else if (score > 7 && score <= 12) {
+        perfil = 'Moderado';
+        perfilHTML = perfilModeradoHTML;
+      } else {
+        perfil = 'Arriesgado';
+        perfilHTML = perfilArriesgadoHTML;
+      }
+      resultSpan.textContent = perfil;
+      resultContainer.style.display = 'block';
+      progressBar.style.width = '100%';
+      steps[totalSteps - 1].style.display = 'none';
+      if (btnNext) btnNext.disabled = true;
+      if (btnPrev) btnPrev.disabled = true;
+      resultProfile.innerHTML = perfilHTML;
+    }
+
+    /************************************************************
+      CALCULADORA DE INVERSIONES
+    *************************************************************/
     let investmentData = {};
     function calculateInvestment() {
       const amount = parseFloat(document.getElementById('amount').value);
@@ -1256,11 +1645,13 @@
       const capitalization = parseInt(document.getElementById('capitalization').value);
       const resultDiv = document.getElementById('result');
       const downloadButton = document.getElementById('download-excel');
+
       if (!amount || !rate || !time) {
         resultDiv.innerHTML = "Por favor, complete todos los campos";
         downloadButton.disabled = true;
         return;
       }
+
       let finalAmount = 0;
       let interest = 0;
       let periodicInterests = [];
@@ -1270,7 +1661,9 @@
         minimumFractionDigits: 2,
         maximumFractionDigits: 2
       });
+
       if (interestType === 'simple') {
+        // Interés Simple
         const interestPerPeriod = (amount * rate * (capitalization / 12));
         const periods = Math.ceil(time * 12 / capitalization);
         for (let i = 1; i <= periods; i++) {
@@ -1279,6 +1672,7 @@
         interest = amount * rate * time;
         finalAmount = amount + interest;
       } else {
+        // Interés Compuesto
         const periodsPerYear = 12 / capitalization;
         const totalPeriods = Math.ceil(time * periodsPerYear);
         const ratePerPeriod = rate / periodsPerYear;
@@ -1292,6 +1686,7 @@
         finalAmount = currentAmount;
         interest = finalAmount - amount;
       }
+
       investmentData = {
         "Capital Inicial": formatter.format(amount),
         "Intereses Generados": formatter.format(interest),
@@ -1299,6 +1694,7 @@
         "Frecuencia de Capitalización": `Cada ${capitalization} mes(es)`,
         "Intereses por Período": periodicInterests.map((pi, idx) => `Período ${idx + 1}: ${formatter.format(pi)}`)
       };
+
       let periodicInterestsHTML = '<div class="interest-details"><h4>Intereses por período:</h4>';
       periodicInterests.forEach((periodInterest, index) => {
         periodicInterestsHTML += `
@@ -1308,6 +1704,7 @@
         `;
       });
       periodicInterestsHTML += '</div>';
+
       resultDiv.innerHTML = `
         <h3>Resultados de la Inversión</h3>
         <p>Capital Inicial: ${formatter.format(amount)}</p>
@@ -1317,10 +1714,8 @@
         ${periodicInterestsHTML}
       `;
       downloadButton.disabled = false;
-      resultDiv.classList.remove('animation');
-      void resultDiv.offsetWidth;
-      resultDiv.classList.add('animation');
     }
+
     function downloadExcel() {
       if (!investmentData || Object.keys(investmentData).length === 0) {
         alert("No hay resultados para descargar.");
@@ -1342,6 +1737,7 @@
       ];
       const ws_main = XLSX.utils.aoa_to_sheet(mainData);
       XLSX.utils.book_append_sheet(wb, ws_main, "Resultados");
+
       if (investmentData["Intereses por Período"]) {
         const periodData = [
           ["Intereses por Período"],
@@ -1356,28 +1752,28 @@
       }
       XLSX.writeFile(wb, `Resultados_Inversion_${new Date().toISOString().slice(0,19).replace(/[:T]/g,"-")}.xlsx`);
     }
-    document.querySelectorAll('input[type="number"]').forEach(input => {
-      input.addEventListener('input', function() {
-        if (this.value < 0) this.value = 0;
-      });
-    });
+
+    /************************************************************
+      GENERADOR DE PROMPTS
+    *************************************************************/
     function generarPrompt() {
       const instrumento = document.getElementById('instrumento').value;
       const denominacion = document.getElementById('denominacion').value;
       const dias = document.getElementById('dias').value;
       const moneda = document.getElementById('moneda').value;
       const mercado = document.getElementById('mercado').value;
+
       const parteInicial = "Como experto en análisis financiero, necesito que me proporciones ";
       let parteVariable = `un análisis detallado del ${instrumento || 'instrumento financiero'} ${denominacion || ''} `;
       parteVariable += `en los últimos ${dias || '30'} días de operación `;
       parteVariable += `en ${moneda || 'USD'} `;
       parteVariable += `del mercado ${mercado || 'NYSE'}. `;
-      const parteFinal = "Incluye en tu análisis: 1) Tendencia general del precio, 2) Volatilidad observada, " +
-                           "3) Volúmenes de negociación relevantes, 4) Eventos significativos que hayan afectado su " +
-                           "comportamiento, y 5) Una recomendación técnica basada en los datos analizados.";
+      const parteFinal = "Incluye en tu análisis: 1) Tendencia general del precio, 2) Volatilidad observada, 3) Volúmenes de negociación, 4) Eventos significativos, y 5) Una recomendación técnica basada en los datos.";
+
       const promptCompleto = parteInicial + parteVariable + parteFinal;
       document.getElementById('resultado').textContent = promptCompleto;
     }
+
     function copiarPrompt() {
       const resultado = document.getElementById('resultado');
       const texto = resultado.textContent;
@@ -1392,10 +1788,70 @@
         alert('Primero genera un prompt para poder copiarlo.');
       }
     }
-  </script>
 
-  <!-- Scripts para Criptomonedas (Seguimiento BTC/USD) -->
-  <script>
+    /************************************************************
+      COTIZACIONES DE TIPOS DE DÓLARES (AUTOMÁTICO)
+    *************************************************************/
+    // Mapeo para renombrar y asignar descripción a cada tipo
+    const dolarMap = {
+      'oficial': 'Dólar Oficial',
+      'blue': 'Dólar Blue',
+      'bolsa': 'Dólar Bolsa (MEP)',
+      'contadoconliqui': 'Dólar CCL',
+      'mayorista': 'Dólar Mayorista',
+      'cripto': 'Dólar Cripto',
+      'tarjeta': 'Dólar Tarjeta'
+    };
+
+    const tooltipDescriptions = {
+      'Dólar Oficial': "Tipo de cambio controlado por el Banco Central de Argentina.",
+      'Dólar Blue': "Tipo de cambio en el mercado informal, generalmente más alto que el oficial.",
+      'Dólar Bolsa (MEP)': "Compra de bonos en pesos y venta en dólares en el mercado local.",
+      'Dólar CCL': "Compra de bonos en pesos y venta en dólares en el exterior.",
+      'Dólar Mayorista': "Tipo de cambio para empresas en comercio exterior y operaciones grandes.",
+      'Dólar Cripto': "Tipo de cambio usando criptomonedas (stablecoins) ancladas al dólar estadounidense.",
+      'Dólar Tarjeta': "Se aplica a compras con tarjeta en moneda extranjera y adquisición de divisas para ahorro, incluye recargos."
+    };
+
+    async function fetchDolares() {
+      try {
+        const response = await fetch('https://dolarapi.com/v1/dolares');
+        const data = await response.json();
+
+        // Fecha y hora de la actualización
+        const now = new Date();
+        const updateTime = now.toLocaleString('es-AR');
+        document.getElementById('update-time').textContent = `Última actualización: ${updateTime}`;
+
+        let html = '';
+        data.forEach((d, index) => {
+          const nombre = d.casa.toLowerCase();
+          const titulo = dolarMap[nombre] ? dolarMap[nombre] : d.casa;
+          const descripcion = tooltipDescriptions[titulo] ? tooltipDescriptions[titulo] : "";
+          // Si es el último elemento (índice 6 en un total de 7) se centra en la fila final
+          const extraStyle = (index === 6) ? 'grid-column: 2 / span 1;' : '';
+          html += `
+            <div class="dolar-card" style="${extraStyle}">
+              <h4>${titulo}</h4>
+              <p><strong>Compra:</strong> ${d.compra}</p>
+              <p><strong>Venta:</strong> ${d.venta}</p>
+              <div class="tooltip">${descripcion}</div>
+            </div>
+          `;
+        });
+
+        document.getElementById('cotizaciones-container').innerHTML = html;
+      } catch (error) {
+        document.getElementById('cotizaciones-container').innerHTML = `
+          <p style="color: var(--danger-color);">Error al obtener cotizaciones</p>
+        `;
+        console.error('Error:', error);
+      }
+    }
+
+    /************************************************************
+      CRIPTOMONEDAS (BTC/USD)
+    *************************************************************/
     let priceChart;
     async function fetchBTCPrice() {
       try {
@@ -1404,23 +1860,29 @@
           fetch('https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT'),
           fetch('https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1h&limit=24')
         ]);
+
         const priceData = await priceResponse.json();
         const changeData = await changeResponse.json();
         const klineData = await klineResponse.json();
+
         const price = parseFloat(priceData.price).toFixed(2);
         document.getElementById('price').textContent = `$${price}`;
+
         const change24h = parseFloat(changeData.priceChangePercent).toFixed(2);
         const changeElement = document.getElementById('change24h');
         changeElement.textContent = `Variación 24h: ${change24h}%`;
         changeElement.className = 'change-24h ' + (change24h >= 0 ? 'positive' : 'negative');
+
         const maxPrice = Math.max(...klineData.map(k => parseFloat(k[2])));
         const maxPriceKline = klineData.find(k => parseFloat(k[2]) === maxPrice);
         const maxTime = new Date(maxPriceKline[0]);
         const maxTimeString = `${String(maxTime.getUTCHours()).padStart(2, '0')}:${String(maxTime.getUTCMinutes()).padStart(2, '0')}`;
         document.getElementById('maxPrice').textContent = `Máximo 24h: $${maxPrice.toFixed(2)} (${maxTimeString} UTC)`;
+
         const now = new Date();
         const timeString = now.toLocaleTimeString('es-AR', { hour12: false }).slice(0, -3);
         document.getElementById('timestamp').textContent = `Última actualización: ${timeString}`;
+
         const labels = klineData.map(k => {
           const date = new Date(k[0]);
           return `${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
@@ -1429,6 +1891,7 @@
         const points = prices.map((price, index) => [index, price]);
         const result = regression.linear(points);
         const trendlineData = result.points.map(point => point[1]);
+
         if (priceChart) {
           priceChart.destroy();
         }
@@ -1437,28 +1900,30 @@
           type: 'line',
           data: {
             labels: labels,
-            datasets: [{
-              label: 'Precio BTC/USD',
-              data: prices,
-              borderColor: '#4CAF50',
-              backgroundColor: 'rgba(76, 175, 80, 0.1)',
-              borderWidth: 2,
-              fill: true,
-              tension: 0.4,
-              pointRadius: 4,
-              pointHoverRadius: 6,
-              pointBackgroundColor: '#4CAF50'
-            },
-            {
-              label: 'Línea de Tendencia',
-              data: trendlineData,
-              borderColor: '#FFA726',
-              borderWidth: 2,
-              borderDash: [5, 5],
-              fill: false,
-              pointRadius: 0,
-              tension: 0
-            }]
+            datasets: [
+              {
+                label: 'Precio BTC/USD',
+                data: prices,
+                borderColor: '#4CAF50',
+                backgroundColor: 'rgba(76, 175, 80, 0.1)',
+                borderWidth: 2,
+                fill: true,
+                tension: 0.4,
+                pointRadius: 4,
+                pointHoverRadius: 6,
+                pointBackgroundColor: '#4CAF50'
+              },
+              {
+                label: 'Línea de Tendencia',
+                data: trendlineData,
+                borderColor: '#FFA726',
+                borderWidth: 2,
+                borderDash: [5, 5],
+                fill: false,
+                pointRadius: 0,
+                tension: 0
+              }
+            ]
           },
           options: {
             responsive: true,
@@ -1501,6 +1966,8 @@
         console.error('Error:', error);
       }
     }
+
+    // Consulta a la API de BTC al cargar, y refrescar cada 10 seg
     fetchBTCPrice();
     setInterval(fetchBTCPrice, 10000);
     document.getElementById('updateBtn').addEventListener('click', () => {
